@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<script src="./emoji-data.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@300;400;500&family=IM+Fell+English:ital@1&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ws:#1a1814;--panel:#f5f0e6;--pl:#e2dace;
+  --ink:#2c2722;--soft:#8a8077;--accent:#7c6b52;--accent-d:#6a5a42;
+  --handle:#c4a06a;--sp:0 2px 4px rgba(0,0,0,.1),0 10px 28px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Noto Sans TC','Zen Kaku Gothic New',system-ui,sans-serif;color:var(--ink);background:var(--ws);overflow:hidden;overscroll-behavior:none;-webkit-user-select:none;user-select:none}
+.stagearea,.stage,.stage-wrap{touch-action:none}
+.app{display:grid;grid-template-columns:260px 1fr;height:100vh}
+
+/* ── Panel ─────────────────────────────────────────────────── */
+.panel{background:var(--panel);border-right:1px solid var(--pl);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+.panel::-webkit-scrollbar{width:3px}.panel::-webkit-scrollbar-thumb{background:var(--pl)}
+.brand{padding:18px 18px 14px;border-bottom:1px solid var(--pl)}
+.brand h1{font-family:'Noto Serif TC',serif;font-weight:700;font-size:16px;letter-spacing:.15em;color:var(--ink);line-height:1.4}
+.brand h1 em{font-style:normal;font-weight:400;font-size:11px;letter-spacing:.2em;color:var(--soft);display:block;margin-top:3px}
+.group{padding:13px 18px;border-bottom:1px solid var(--pl)}
+.lbl{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--soft);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;font-family:'Noto Sans TC',sans-serif}
+.hidden{display:none !important}
+input[type=file]{display:none !important}   /* 檔案輸入一律隱藏,改由按鈕觸發(避免框架移除 hidden 屬性時露出) */
+
+/* Buttons */
+.btn{display:flex;align-items:center;gap:8px;width:100%;border:1px solid var(--pl);background:#fff;color:var(--ink);font-family:inherit;font-size:12.5px;font-weight:400;padding:9px 11px;border-radius:6px;cursor:pointer;letter-spacing:.04em;transition:border-color .15s,background .12s}
+.btn:hover{border-color:var(--accent);background:#faf6ef}
+.btn svg{width:14px;height:14px;flex:none;color:var(--soft)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary svg{color:rgba(255,255,255,.75)}.btn.primary:hover{background:var(--accent-d)}
+.btn.danger:hover{border-color:#c0392b;color:#c0392b}.btn.danger:hover svg{color:#c0392b}
+.btn+.btn{margin-top:7px}.btn.sm{padding:7px 9px;font-size:11.5px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:7px}.row2 .btn+.btn{margin-top:0}
+
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{border:1px solid var(--pl);background:#fff;border-radius:5px;padding:5px 9px;font-size:11.5px;font-weight:400;cursor:pointer;color:var(--ink);letter-spacing:.03em;transition:all .12s}
+.chip:hover{border-color:var(--accent)}.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* Swatches */
+.swatches{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.sw{width:22px;height:22px;border-radius:5px;cursor:pointer;border:1px solid rgba(0,0,0,.1);transition:transform .1s}
+.sw:hover{transform:scale(1.1)}.sw.active{outline:2px solid var(--accent);outline-offset:2px}
+.sw-custom{position:relative;width:22px;height:22px;border-radius:5px;overflow:hidden;border:1px dashed #c5bdb3;display:grid;place-items:center}
+.sw-custom input{position:absolute;inset:0;opacity:0;cursor:pointer}.sw-custom span{font-size:12px;color:var(--soft);pointer-events:none}
+
+/* Layouts grid */
+.lay-section-title{font-size:9.5px;letter-spacing:.12em;color:var(--soft);margin-bottom:6px;font-weight:500;text-transform:uppercase}
+.layouts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}
+.lay{aspect-ratio:1;border:1.5px solid var(--pl);background:#faf7f2;border-radius:5px;cursor:pointer;padding:5px;position:relative;transition:border-color .15s,background .15s;overflow:hidden}
+.lay:hover{border-color:var(--accent);background:#f5efe5}
+.lay.active{border-color:var(--accent);background:rgba(124,107,82,.1)}
+.lay i{background:#d8d0c6;border-radius:1px;display:block;position:absolute}
+.lay.active i{background:rgba(124,107,82,.5)}
+.lay .lay-name{position:absolute;bottom:2.5px;left:0;right:0;text-align:center;font-size:8px;color:var(--soft);font-weight:400;letter-spacing:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px;font-family:'Noto Sans TC',sans-serif}
+.lay:hover .lay-name{color:var(--accent)}.lay.active .lay-name{color:var(--accent)}
+
+/* Sliders */
+.slider{margin-bottom:9px}
+.slider label{display:flex;justify-content:space-between;font-size:11px;color:var(--soft);margin-bottom:5px;letter-spacing:.03em}
+.slider label b{color:var(--ink);font-weight:500}
+input[type=range]{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:#ddd7ca;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+
+/* Emojis */
+.sticker-cats{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.scat{padding:3px 8px;border-radius:20px;border:1px solid var(--pl);background:transparent;font-size:10px;color:var(--soft);cursor:pointer;letter-spacing:.04em;transition:all .15s;white-space:nowrap;font-family:inherit}
+.scat:hover{border-color:var(--accent);color:var(--ink)}
+.scat.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.emojis{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.emojis button{border:1px solid var(--pl);background:#faf7f2;border-radius:5px;font-size:16px;padding:4px 0;cursor:pointer;line-height:1;transition:border-color .1s,transform .1s}
+.emojis button:hover{border-color:var(--accent);transform:scale(1.12)}
+.emojis button.add-sticker{color:var(--accent);font-weight:700;border-style:dashed}
+
+/* Cloud library */
+.cloud-search{display:flex;gap:5px}
+.cloud-search input{flex:1;min-width:0;border:1px solid var(--pl);background:#fff;border-radius:6px;padding:8px 10px;font-family:inherit;font-size:12.5px;color:var(--ink);outline:none;letter-spacing:.03em}
+.cloud-search input:focus{border-color:var(--accent)}
+.cloud-search input{-webkit-user-select:text;user-select:text}
+.cloud-search button{flex:none;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:6px;padding:0 13px;font-size:12px;cursor:pointer;font-family:inherit;letter-spacing:.06em}
+.cloud-search button:hover{background:var(--accent-d)}
+.cloud-results{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.cloud-results:not(:empty){margin-top:9px}
+.cloud-results img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:5px;cursor:pointer;border:1px solid var(--pl);transition:border-color .12s,transform .1s;background:#eee}
+.cloud-results img:hover{border-color:var(--accent);transform:scale(1.05)}
+.cloud-results .more{grid-column:1/-1;font-size:11px;color:var(--soft);text-align:center;padding:7px;cursor:pointer;border:1px dashed var(--pl);border-radius:5px;letter-spacing:.06em}
+.cloud-results .more:hover{border-color:var(--accent);color:var(--accent)}
+/* 圖示格:向量圖示要完整顯示、不裁切 */
+.cloud-results.icons{grid-template-columns:repeat(6,1fr)}
+.cloud-results.icons img{aspect-ratio:1;object-fit:contain;padding:5px;background:#faf7f2}
+.hint a{color:var(--accent);cursor:pointer;text-decoration:underline}
+.res-custom{display:flex;align-items:center;gap:8px}
+.res-custom label{font-size:11px;color:var(--soft);letter-spacing:.04em;white-space:nowrap}
+.res-custom input{flex:1;min-width:0;border:1px solid var(--pl);background:#fff;border-radius:6px;padding:6px 9px;font-family:inherit;font-size:12.5px;color:var(--ink);outline:none;-webkit-user-select:text;user-select:text}
+.res-custom input:focus{border-color:var(--accent)}
+
+/* Eraser modal */
+.eraser-modal{position:fixed;inset:0;z-index:2000;background:rgba(20,18,16,.9);display:flex;flex-direction:column}
+.eraser-bar{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--panel);border-bottom:1px solid var(--pl);flex-wrap:wrap}
+.eraser-title{font-family:'Noto Serif TC',serif;font-weight:500;letter-spacing:.08em;margin-right:4px}
+.eraser-size{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--soft)}
+.eraser-size input[type=range]{width:120px}
+.eraser-spacer{flex:1}
+.eraser-bar .btn{width:auto}
+.eraser-stage{flex:1;display:grid;place-items:center;overflow:auto;padding:20px;min-height:0}
+#eraserCanvas{max-width:100%;max-height:100%;object-fit:contain;cursor:crosshair;touch-action:none;box-shadow:0 8px 40px rgba(0,0,0,.6);
+  background-image:linear-gradient(45deg,#c9c4bc 25%,transparent 25%),linear-gradient(-45deg,#c9c4bc 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#c9c4bc 75%),linear-gradient(-45deg,transparent 75%,#c9c4bc 75%);
+  background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0;background-color:#fff}
+.eraser-tip{text-align:center;color:#cfc7bb;font-size:11.5px;padding:0 16px 14px;letter-spacing:.04em}
+.eraser-cursor{position:fixed;border:1.5px solid #fff;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);z-index:2001;display:none;mix-blend-mode:difference;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+#eraserCanvas{cursor:none}
+
+/* Help / tour */
+.help-fab{position:fixed;right:16px;bottom:16px;width:42px;height:42px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:21px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);z-index:1500;display:grid;place-items:center;line-height:1}
+.help-fab:hover{background:var(--accent-d)}
+.tour{position:fixed;inset:0;z-index:1600}
+.tour-spot{position:fixed;border-radius:8px;box-shadow:0 0 0 9999px rgba(20,18,16,.74);transition:left .25s,top .25s,width .25s,height .25s;pointer-events:none}
+.tour-card{position:fixed;width:272px;max-width:calc(100vw - 32px);background:var(--panel);border:1px solid var(--pl);border-radius:12px;padding:16px 17px;box-shadow:0 12px 44px rgba(0,0,0,.45);transition:left .2s,top .2s;z-index:1601}
+.tour-step{font-size:10px;letter-spacing:.15em;color:var(--soft);text-transform:uppercase;margin-bottom:6px}
+.tour-card h3{font-family:'Noto Serif TC',serif;font-size:15px;margin-bottom:6px;color:var(--ink)}
+.tour-card p{font-size:12.5px;line-height:1.65;color:var(--ink);opacity:.9}
+.tour-actions{display:flex;align-items:center;gap:8px;margin-top:15px}
+.tour-actions .tour-spacer{flex:1}
+.tour-actions button{border:1px solid var(--pl);background:#fff;color:var(--ink);border-radius:6px;padding:6px 13px;font-size:12px;cursor:pointer;font-family:inherit;letter-spacing:.04em}
+.tour-actions button:hover{border-color:var(--accent)}
+.tour-actions button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.tour-actions button.primary:hover{background:var(--accent-d)}
+.tour-actions #tourSkip{border:none;color:var(--soft);padding-left:2px}
+.tour-actions #tourSkip:hover{color:var(--ink)}
+
+/* Fonts */
+.fonts{display:flex;flex-wrap:wrap;gap:5px}
+.fontchip{border:1px solid var(--pl);background:#fff;border-radius:5px;padding:5px 9px;font-size:12px;cursor:pointer;color:var(--ink);transition:all .12s;letter-spacing:.02em}
+.fontchip.active{border-color:var(--accent);background:var(--accent);color:#fff}
+
+.hint{font-size:10.5px;color:var(--soft);line-height:1.65;margin-top:7px;letter-spacing:.03em}
+.foot{margin-top:auto;padding:12px 18px;font-size:9.5px;color:#b0a898;line-height:1.6;letter-spacing:.04em}
+.divider{height:1px;background:var(--pl);margin:8px 0}
+
+/* ── Workspace ─────────────────────────────────────────────── */
+.workspace{position:relative;overflow:hidden;background:var(--ws);display:flex;flex-direction:column}
+.workspace::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.028) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;z-index:0}
+.stagearea{flex:1;display:grid;place-items:center;position:relative;min-height:0;z-index:1}
+.stage-wrap{position:relative}
+.stage{position:relative;overflow:hidden;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.45),0 32px 80px rgba(0,0,0,.35),0 0 0 .5px rgba(255,255,255,.06);border-radius:2px}
+
+/* ── Items ─────────────────────────────────────────────────── */
+.item{position:absolute;touch-action:none;will-change:transform}
+.item img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none;object-fit:cover;border-radius:inherit}
+.item .frame{position:absolute;inset:0;border-radius:inherit;box-shadow:var(--sp);pointer-events:none}
+.item.text{display:grid;place-items:center;padding:6px 10px;white-space:pre-wrap;text-align:center;line-height:1.3;word-break:break-word}
+.item.text .txt{outline:none;width:100%}
+.item.sticker{display:grid;place-items:center;line-height:1}
+.item.sticker .glyph{pointer-events:none}
+.item.selected{z-index:99999 !important}
+.item .ctrl{position:absolute;inset:-1px;pointer-events:none;opacity:0}
+.item.selected .ctrl{opacity:1}
+.item.editing{cursor:text}.item.editing .ctrl{opacity:.3}
+.ctrl .outline{position:absolute;inset:0;border:1.5px solid var(--accent);border-radius:inherit}
+.handle{position:absolute;width:12px;height:12px;background:var(--panel);border:1.5px solid var(--accent);border-radius:2px;pointer-events:auto;transform:translate(-50%,-50%)}
+.handle.tl{left:0;top:0;cursor:nwse-resize}.handle.tr{left:100%;top:0;cursor:nesw-resize}
+.handle.bl{left:0;top:100%;cursor:nesw-resize}.handle.br{left:100%;top:100%;cursor:nwse-resize}
+.rotate{position:absolute;left:50%;top:-28px;width:17px;height:17px;transform:translate(-50%,-50%);border-radius:50%;background:var(--handle);border:2px solid #fff;pointer-events:auto;cursor:grab;box-shadow:0 1px 4px rgba(0,0,0,.28)}
+.rstem{position:absolute;left:50%;top:-28px;height:28px;width:1px;background:var(--accent);transform:translateX(-50%);pointer-events:none;opacity:.6}
+
+/* Empty state */
+.empty{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;text-align:center}
+.empty-inner{opacity:.55}
+.empty .ic{width:34px;height:34px;margin:0 auto 12px;color:rgba(255,255,255,.7)}
+.empty h2{font-family:'Noto Serif TC',serif;font-weight:400;font-size:16px;color:rgba(255,255,255,.8);margin-bottom:6px;letter-spacing:.15em}
+.empty p{font-size:11.5px;line-height:1.7;color:rgba(255,255,255,.5);letter-spacing:.06em}
+.workspace.over::after{content:"放開以加入照片";position:absolute;inset:12px;border:1.5px dashed var(--accent);border-radius:6px;display:grid;place-items:center;color:rgba(255,255,255,.8);font-weight:500;font-size:13px;letter-spacing:.1em;background:rgba(124,107,82,.1);pointer-events:none;z-index:99999}
+
+/* Page bar */
+.pagebar{display:flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(16,14,12,.75);border-top:1px solid rgba(255,255,255,.04);overflow-x:auto;backdrop-filter:blur(4px)}
+.ptab{flex:none;min-width:36px;height:30px;padding:0 10px;border-radius:5px;background:rgba(255,255,255,.07);color:#bab5ad;border:1px solid transparent;font-size:12px;font-weight:400;letter-spacing:.08em;cursor:pointer;display:grid;place-items:center}
+.ptab:hover{background:rgba(255,255,255,.12)}.ptab.active{background:var(--panel);color:var(--ink)}
+.ptab .del{margin-left:7px;opacity:.4;font-size:13px}.ptab .del:hover{opacity:1;color:#c0392b}
+.padd{flex:none;width:30px;height:30px;border-radius:5px;background:rgba(255,255,255,.05);color:#bab5ad;border:1px dashed rgba(255,255,255,.18);cursor:pointer;font-size:16px;display:grid;place-items:center}
+.padd:hover{background:rgba(255,255,255,.1);color:#fff}
+.pagelabel{flex:none;font-size:10px;color:#6b6560;margin-right:4px;letter-spacing:.1em}
+
+/* Quick bar */
+.quickbar{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:3px;background:rgba(20,18,14,.95);padding:5px;border-radius:10px;backdrop-filter:blur(10px);box-shadow:0 8px 28px rgba(0,0,0,.5),0 0 0 .5px rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .18s;z-index:100000}
+.quickbar.show{opacity:1;pointer-events:auto}
+.qbtn{width:34px;height:34px;border:none;background:transparent;border-radius:7px;display:grid;place-items:center;cursor:pointer;color:#a09890}
+.qbtn:hover{background:rgba(255,255,255,.08);color:#f5f0e6}
+.qbtn svg{width:16px;height:16px}
+.qsep{width:1px;background:rgba(255,255,255,.1);margin:6px 2px}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+.mob-nav,.sidebar-btn{display:none}
+.mob-backdrop{display:none;position:fixed;inset:0;z-index:499;background:rgba(0,0,0,.4);backdrop-filter:blur(2px)}
+.mob-backdrop.show{display:block}
+
+/* Tablet 601–960px: panel slides in from left */
+@media(min-width:601px) and (max-width:960px){
+  .app{grid-template-columns:1fr}
+  .panel{position:fixed;left:0;top:0;bottom:0;z-index:500;width:265px;transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1);box-shadow:6px 0 32px rgba(0,0,0,.45)}
+  .panel.panel-open{transform:translateX(0)}
+  .sidebar-btn{display:grid;position:absolute;top:12px;left:12px;z-index:10;width:38px;height:38px;border-radius:8px;background:rgba(20,18,14,.85);border:1px solid rgba(255,255,255,.1);cursor:pointer;place-items:center;color:#b8b0a6;transition:background .15s,color .15s;flex-shrink:0}
+  .sidebar-btn svg{width:18px;height:18px}
+  .sidebar-btn:hover{background:rgba(55,48,38,.95);color:#f5f0e6}
+  .foot{display:none}
+}
+
+/* Mobile ≤600px: bottom sheet + nav bar */
+@media(max-width:600px){
+  html,body{height:100%;overflow:hidden}
+  .app{grid-template-columns:1fr;grid-template-rows:1fr auto;height:calc(100dvh - 56px)}
+  .panel{position:fixed;left:0;right:0;bottom:56px;max-height:72vh;overflow-y:auto;overflow-x:hidden;flex-direction:column;border-right:none;border-top:1px solid var(--pl);border-radius:18px 18px 0 0;z-index:500;transform:translateY(101%);transition:transform .3s cubic-bezier(.32,0,.67,0);box-shadow:0 -8px 40px rgba(0,0,0,.5)}
+  .panel::before{content:'';display:block;width:36px;height:4px;background:#c5bdb3;border-radius:2px;margin:10px auto 0;flex-shrink:0}
+  .panel.panel-open{transform:translateY(0);transition-timing-function:cubic-bezier(.33,1,.68,1)}
+  .mob-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:56px;background:rgba(14,12,10,.97);border-top:1px solid rgba(255,255,255,.07);z-index:600;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  .mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:#706760;cursor:pointer;font-size:9px;letter-spacing:.05em;font-family:'Noto Sans TC',sans-serif;padding:6px 2px;transition:color .15s;-webkit-tap-highlight-color:transparent}
+  .mob-nav-btn svg{width:20px;height:20px;flex-shrink:0}
+  .mob-nav-btn.active,.mob-nav-btn:active{color:var(--accent)}
+  .mob-nav-btn.mob-add{color:#c4a06a}
+  .mob-nav-btn.mob-add.active{color:#e0ba88}
+  .pagebar{padding:4px 10px;border-top:none;border-bottom:1px solid rgba(255,255,255,.05)}
+  .ptab{min-width:28px;height:24px;font-size:10px;padding:0 8px}
+  .padd{width:26px;height:26px;font-size:14px}
+  .brand{padding:10px 14px 8px}
+  .brand h1 em{display:none}
+  .group{padding:10px 14px}
+  .lbl{font-size:9.5px}
+  .foot{display:none}
+  .sidebar-btn{display:none}
+  .stagearea{padding:8px}
+  .workspace{position:relative}
+}
+</style>
+</helmet>
+
+<div class="app">
+  <aside class="panel">
+    <div class="brand">
+      <h1>拼貼工作室<em>Collage Studio</em></h1>
+    </div>
+
+    <div class="group">
+      <div class="lbl">加入</div>
+      <button class="btn primary" id="addBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+        加入照片
+      </button>
+      <div class="row2" style="margin-top:6px">
+        <button class="btn sm" id="addTextBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7V5h16v2M9 5v14M7 19h4"></path></svg>文字
+        </button>
+        <button class="btn sm" id="dupBtn" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>複製
+        </button>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" multiple hidden>
+      <input type="file" id="stickerInput" accept="image/*" multiple hidden>
+      <input type="file" id="projInput" accept=".json,application/json" hidden>
+    </div>
+
+    <div class="group">
+      <div class="lbl">貼圖</div>
+      <div class="cloud-search" style="margin-bottom:9px">
+        <input type="text" id="stickerQ" placeholder="搜尋貼圖…(貓、愛心、cake)">
+        <button id="stickerGo">搜尋</button>
+      </div>
+      <div class="sticker-cats" id="stickerCats"></div>
+      <div class="emojis" id="emojis"></div>
+      <p class="hint" id="stickerHint">依分類瀏覽,或輸入關鍵字搜尋 —— 先找精選貼圖,再從中文 emoji 資料庫(近 2000 個)補上更多結果。虛線「＋」可上傳透明 PNG。</p>
+    </div>
+
+    <div class="group">
+      <div class="lbl">雲端圖示 <span style="text-transform:none;letter-spacing:0;font-weight:400">Iconify</span></div>
+      <div class="cloud-search">
+        <input type="text" id="iconQ" placeholder="搜尋圖示(英文較準)…">
+        <button id="iconGo">搜尋</button>
+      </div>
+      <div class="swatches" id="iconColors" style="margin-top:9px"></div>
+      <div class="cloud-results icons" id="iconResults"></div>
+      <p class="hint" id="iconHint">數十萬開源向量圖示。<b>建議用英文關鍵字</b>(如 heart、star、cat)較準,選色後點一下加成貼圖。</p>
+    </div>
+
+    <div class="group">
+      <div class="lbl">雲端圖庫 <span style="text-transform:none;letter-spacing:0;font-weight:400">Pixabay</span></div>
+      <div class="cloud-search">
+        <input type="text" id="cloudQ" placeholder="搜尋照片素材…">
+        <button id="cloudGo">搜尋</button>
+      </div>
+      <div class="cloud-results" id="cloudResults"></div>
+      <p class="hint" id="cloudHint">首次使用請 <a id="cloudKeyLink">設定免費金鑰</a>。輸入關鍵字搜尋,點縮圖即加入畫布。</p>
+    </div>
+
+    <div class="group">
+      <div class="lbl">自動排版</div>
+      <div class="layouts" id="layouts"></div>
+      <div class="slider" style="margin-top:10px;margin-bottom:0">
+        <label>間距 <b><span id="gapVal">10</span>px</b></label>
+        <input type="range" id="gapRange" min="0" max="40" value="10">
+      </div>
+    </div>
+
+    <div class="group hidden" id="filterGroup">
+      <div class="lbl">濾鏡與調整</div>
+      <div class="chips" id="presetChips" style="margin-bottom:12px"></div>
+      <div class="slider"><label>亮度 <b id="brightVal">100%</b></label><input type="range" id="brightRange" min="40" max="160" value="100"></div>
+      <div class="slider"><label>對比 <b id="contrastVal">100%</b></label><input type="range" id="contrastRange" min="40" max="180" value="100"></div>
+      <div class="slider"><label>飽和 <b id="satVal">100%</b></label><input type="range" id="satRange" min="0" max="200" value="100"></div>
+      <div class="chips" style="margin-top:3px">
+        <button class="chip" id="styleShadow">陰影</button>
+        <button class="chip" id="styleRound">圓角</button>
+        <button class="chip" id="styleBorder">白框</button>
+      </div>
+      <div class="row2" style="margin-top:10px">
+        <button class="btn sm" id="bgQuick">快速去背</button>
+        <button class="btn sm" id="bgAI">AI 去背</button>
+      </div>
+      <button class="btn sm" id="bgErase" style="margin-top:7px">手動擦除 / 修補</button>
+      <button class="btn sm" id="bgRevert" style="margin-top:7px" disabled>返回上一步</button>
+      <p class="hint" id="bgHint" style="margin-top:6px">快速去背適合單色背景;複雜背景用 AI 去背(首次需下載模型)。去背/擦除後可按「返回上一步」還原。</p>
+    </div>
+
+    <div class="group hidden" id="textGroup">
+      <div class="lbl">文字樣式</div>
+      <div class="fonts" id="fontChips" style="margin-bottom:10px"></div>
+      <div class="swatches" id="textColors" style="margin-bottom:10px"></div>
+      <div class="row2">
+        <button class="btn sm" id="txtBold">粗體</button>
+        <button class="btn sm" id="txtEdit">編輯文字</button>
+      </div>
+      <p class="hint">雙擊文字直接編輯。</p>
+    </div>
+
+    <div class="group">
+      <div class="lbl">畫布比例</div>
+      <div class="chips" id="ratioChips">
+        <button class="chip active" data-r="1">1:1</button>
+        <button class="chip" data-r="0.75">3:4</button>
+        <button class="chip" data-r="1.3333">4:3</button>
+        <button class="chip" data-r="1.7778">16:9</button>
+        <button class="chip" data-r="0.5625">9:16</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="lbl">背景顏色</div>
+      <div class="swatches" id="swatches">
+        <div class="sw active" data-c="#ffffff" style="background:#ffffff"></div>
+        <div class="sw" data-c="#f5f0e6" style="background:#f5f0e6"></div>
+        <div class="sw" data-c="#111110" style="background:#111110"></div>
+        <div class="sw" data-c="#e8e0d0" style="background:#e8e0d0"></div>
+        <div class="sw" data-c="#dce8d8" style="background:#dce8d8"></div>
+        <div class="sw" data-c="#d8e0e8" style="background:#d8e0e8"></div>
+        <div class="sw" data-c="#e8d8d8" style="background:#e8d8d8"></div>
+        <label class="sw-custom"><span>+</span><input type="color" id="bgCustom" value="#ffffff"></label>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="lbl">專案</div>
+      <div class="row2">
+        <button class="btn sm" id="saveProj">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><path d="M17 21v-8H7v8M7 3v5h8"></path></svg>儲存
+        </button>
+        <button class="btn sm" id="openProj">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6l2 3h8v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg>開啟
+        </button>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="lbl">匯出</div>
+      <div class="chips" id="resChips" style="margin-bottom:8px">
+        <button class="chip" data-w="1080" title="長邊約 1080px">標準</button>
+        <button class="chip active" data-w="2048" title="長邊約 2048px">高畫質</button>
+        <button class="chip" data-w="4096" title="長邊約 4096px">超高</button>
+      </div>
+      <div class="res-custom">
+        <label>自訂長邊</label>
+        <input type="number" id="resCustom" min="128" max="8000" step="1" placeholder="px">
+      </div>
+      <p class="hint" id="resHint" style="margin-top:4px;margin-bottom:9px"></p>
+      <button class="btn" id="exportBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
+        下載本頁 PNG
+      </button>
+      <button class="btn" id="exportJpg" style="margin-top:6px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
+        下載本頁 JPG
+      </button>
+      <button class="btn danger" id="clearBtn" style="margin-top:6px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>
+        清除本頁
+      </button>
+    </div>
+
+    <div class="foot">照片僅在瀏覽器處理，不上傳任何伺服器。<br>專案自動備份於本機瀏覽器。</div>
+  </aside>
+
+  <main class="workspace" id="ws_workspace">
+    <button class="sidebar-btn" id="sidebarBtn" title="展開工具面板">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="7" x2="21" y2="7"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="17" x2="21" y2="17"></line></svg>
+    </button>
+    <div class="stagearea" id="ws_stagearea">
+      <div class="stage-wrap" id="ws_stagewrap">
+        <div class="stage" id="ws_stage"></div>
+        <div class="empty" id="ws_empty">
+          <div class="empty-inner">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+            <h2>空白頁面</h2>
+            <p>加入照片、貼圖或文字<br>或將圖片拖曳至此</p>
+          </div>
+        </div>
+      </div>
+      <div class="quickbar" id="ws_quickbar">
+        <button class="qbtn" id="qFront" title="移到最前"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M4 16V6a2 2 0 0 1 2-2h10"></path></svg></button>
+        <button class="qbtn" id="qBack" title="移到最後"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="12" height="12" rx="2"></rect><path d="M20 8v10a2 2 0 0 1-2 2H8"></path></svg></button>
+        <div class="qsep"></div>
+        <button class="qbtn" id="qFlip" title="水平翻轉"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"></path><path d="M8 8l-4 4 4 4"></path><path d="M16 8l4 4-4 4"></path></svg></button>
+        <button class="qbtn" id="qReset" title="角度歸零"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.4 2.6L3 8"></path><path d="M3 3v5h5"></path></svg></button>
+        <div class="qsep"></div>
+        <button class="qbtn" id="qDelete" title="刪除"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg></button>
+      </div>
+    </div>
+    <div class="pagebar" id="ws_pagebar"><span class="pagelabel">頁面</span></div>
+  </main>
+</div>
+
+<div class="mob-backdrop" id="mobBackdrop"></div>
+<nav class="mob-nav" id="mobNav">
+  <button class="mob-nav-btn mob-add" data-section="add">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8M8 12h8"></path></svg>
+    加入
+  </button>
+  <button class="mob-nav-btn" data-section="layout">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+    排版
+  </button>
+  <button class="mob-nav-btn" data-section="style">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+    樣式
+  </button>
+  <button class="mob-nav-btn" data-section="bg">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+    背景
+  </button>
+  <button class="mob-nav-btn" data-section="more">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></svg>
+    更多
+  </button>
+</nav>
+
+<div class="eraser-modal hidden" id="eraserModal">
+  <div class="eraser-bar">
+    <span class="eraser-title">手動擦除 / 修補</span>
+    <button class="chip active" id="eraserErase">擦除</button>
+    <button class="chip" id="eraserRestore">還原</button>
+    <label class="eraser-size">筆刷 <input type="range" id="eraserSize" min="6" max="140" value="40"></label>
+    <span class="eraser-spacer"></span>
+    <button class="btn sm" id="eraserReset">重置</button>
+    <button class="btn sm" id="eraserCancel">取消</button>
+    <button class="btn sm primary" id="eraserDone">完成</button>
+  </div>
+  <div class="eraser-stage" id="eraserStage">
+    <canvas id="eraserCanvas"></canvas>
+  </div>
+  <p class="eraser-tip">在圖上按住拖曳即可擦除;切到「還原」可把擦掉的部分刷回來。</p>
+</div>
+
+<button class="help-fab" id="helpFab" title="介面導覽">?</button>
+<div class="tour hidden" id="tour">
+  <div class="tour-spot" id="tourSpot"></div>
+  <div class="tour-card" id="tourCard">
+    <div class="tour-step" id="tourStep"></div>
+    <h3 id="tourTitle"></h3>
+    <p id="tourText"></p>
+    <div class="tour-actions">
+      <button id="tourSkip">跳過</button>
+      <span class="tour-spacer"></span>
+      <button id="tourPrev">上一步</button>
+      <button id="tourNext" class="primary">下一步</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const qs = s => document.querySelector(s);
+    const stage     = qs('#ws_stage');
+    const stagearea = qs('#ws_stagearea');
+    const workspace = qs('#ws_workspace');
+    const emptyEl   = qs('#ws_empty');
+    const quickbar  = qs('#ws_quickbar');
+    const pagebar   = qs('#ws_pagebar');
+    const fileInput = qs('#fileInput');
+    const projInput = qs('#projInput');
+
+    // 分類貼圖:每個項目為 [emoji, 關鍵字(中英,供搜尋用)]
+    const STICKER_CATS = [
+      { name:'全部',   key:'all' },
+      { name:'❤️ 情感', key:'love', items:[
+        ['❤️','紅心 愛心 heart love'],['🧡','橘心 orange heart'],['💛','黃心 yellow heart'],['💚','綠心 green heart'],
+        ['💙','藍心 blue heart'],['💜','紫心 purple heart'],['🖤','黑心 black heart'],['🤍','白心 white heart'],
+        ['💕','兩顆心 hearts 愛'],['💞','旋轉愛心 revolving hearts'],['💓','心跳 beating heart'],['💗','愛心 growing heart'],
+        ['💖','閃亮愛心 sparkling heart 閃'],['💝','禮物愛心 heart gift 緞帶'],['💘','邱比特 箭 cupid arrow heart'],['😍','花痴 愛心眼 heart eyes'],
+        ['🥰','幸福 三個愛心 smiling hearts'],['😘','飛吻 kiss 親'],['🫶','比愛心 手 heart hands'],['💌','情書 love letter 信']] },
+      { name:'😊 表情', key:'face', items:[
+        ['😊','微笑 smile 開心'],['😄','大笑 開心 grin happy'],['😆','笑 大笑 laugh'],['🥳','派對 慶祝 party 生日'],
+        ['😎','墨鏡 酷 cool sunglasses'],['🤩','星星眼 崇拜 star struck'],['😜','吐舌 調皮 tongue wink'],['🤔','思考 想 thinking'],
+        ['😴','睡覺 sleep 睡'],['🥹','感動 淚 holding tears'],['😭','大哭 哭 cry sob'],['😱','尖叫 驚 scream shock'],
+        ['🥺','拜託 委屈 pleading 可憐'],['😇','天使 光環 angel'],['🤗','抱抱 擁抱 hug'],['😏','得意 奸笑 smirk'],
+        ['🤭','摀嘴 偷笑 giggle'],['😅','苦笑 冷汗 sweat smile'],['🫠','融化 melting'],['😋','好吃 舔嘴 yum 美味']] },
+      { name:'🌸 自然', key:'nature', items:[
+        ['🌸','櫻花 cherry blossom 花'],['🌺','扶桑花 hibiscus 花'],['🌻','向日葵 太陽花 sunflower'],['🌹','玫瑰 rose 花'],
+        ['🌷','鬱金香 tulip 花'],['🌼','小花 雛菊 blossom'],['🌿','香草 葉 herb leaf 葉子'],['🍃','葉子 風 leaves 葉'],
+        ['🍀','幸運草 四葉草 clover'],['☘️','三葉草 shamrock 幸運'],['🌱','幼苗 發芽 seedling 芽'],['🌲','樹 常青樹 tree'],
+        ['🎋','七夕 竹 tanabata bamboo'],['🎍','門松 松 pine 竹'],['🍁','楓葉 maple 秋'],['🍂','落葉 秋 fallen leaves'],
+        ['🌾','稻穗 麥 rice ear'],['🌵','仙人掌 cactus'],['🎄','聖誕樹 christmas tree 耶誕'],['🌴','棕櫚 椰子 palm tree 海邊']] },
+      { name:'🍰 食物', key:'food', items:[
+        ['🍰','蛋糕 cake 甜點'],['🎂','生日蛋糕 birthday cake'],['🧁','杯子蛋糕 cupcake'],['🍩','甜甜圈 donut'],
+        ['🍪','餅乾 cookie'],['🍫','巧克力 chocolate'],['🍬','糖果 candy 糖'],['🍭','棒棒糖 lollipop 糖'],
+        ['🍮','布丁 pudding 布蕾'],['☕','咖啡 coffee 熱飲'],['🧋','珍珠奶茶 珍奶 bubble tea'],['🍵','茶 綠茶 tea 抹茶'],
+        ['🥂','香檳 乾杯 cheers champagne'],['🍷','紅酒 葡萄酒 wine'],['🍹','調酒 熱帶 cocktail'],['🧃','果汁 juice 飲料'],
+        ['🍓','草莓 strawberry'],['🍒','櫻桃 cherry'],['🍑','桃子 peach'],['🍋','檸檬 lemon']] },
+      { name:'✨ 裝飾', key:'deco', items:[
+        ['✨','閃亮 亮片 sparkles 閃'],['⭐','星星 star'],['🌟','閃亮星 glowing star'],['💫','暈眩星 頭暈 dizzy'],
+        ['⚡','閃電 電 lightning'],['🔥','火 火焰 fire 熱'],['🌈','彩虹 rainbow'],['☀️','太陽 sun 晴'],
+        ['🌙','月亮 moon 夜'],['❄️','雪花 snowflake 雪'],['🎀','蝴蝶結 緞帶 ribbon bow'],['🎊','彩球 confetti 慶祝'],
+        ['🎉','拉炮 慶祝 party popper'],['🎈','氣球 balloon'],['🎁','禮物 present gift 禮'],['🏆','獎盃 trophy 冠軍'],
+        ['🥇','金牌 gold medal 第一'],['💎','鑽石 寶石 diamond gem'],['👑','皇冠 crown 王'],['🔮','水晶球 crystal ball 占卜']] },
+      { name:'📷 生活', key:'life', items:[
+        ['📷','相機 camera 拍照'],['📸','閃光 拍照 camera flash'],['🎵','音符 music note 音樂'],['🎶','音符 音樂 notes'],
+        ['🎸','吉他 guitar'],['🎹','鋼琴 piano 琴鍵'],['📚','書 books 書本 閱讀'],['✏️','鉛筆 pencil 寫'],
+        ['🖊️','原子筆 pen 筆'],['📖','書 open book 閱讀'],['🎨','調色盤 palette 畫畫 藝術'],['🖌️','畫筆 paintbrush 刷'],
+        ['🎭','面具 戲劇 theater masks'],['🎪','馬戲團 帳篷 circus tent'],['🎠','旋轉木馬 carousel'],['🌍','地球 earth globe 世界'],
+        ['✈️','飛機 airplane 旅行'],['🚀','火箭 rocket'],['⛵','帆船 sailboat 船'],['🏖️','海灘 沙灘 beach 海邊']] },
+      { name:'🐾 動物', key:'animal', items:[
+        ['🐾','腳印 肉球 paw prints'],['🐱','貓 cat 貓咪 kitten'],['🐶','狗 dog 狗狗 puppy'],['🐰','兔子 rabbit bunny 兔'],
+        ['🐻','熊 bear'],['🐼','熊貓 貓熊 panda'],['🦊','狐狸 fox'],['🐨','無尾熊 koala'],
+        ['🐸','青蛙 frog'],['🐧','企鵝 penguin'],['🦋','蝴蝶 butterfly'],['🐝','蜜蜂 bee 蜂'],
+        ['🐢','烏龜 turtle 龜'],['🦄','獨角獸 unicorn'],['🐳','鯨魚 whale 鯨'],['🦩','紅鶴 火鶴 flamingo'],
+        ['🐬','海豚 dolphin'],['🦁','獅子 lion'],['🐯','老虎 tiger 虎'],['🦅','老鷹 鷹 eagle']] },
+    ];
+    let activeStickerCat = 'all';
+    // 全部貼圖(tuple 陣列),供「全部」分類與搜尋共用
+    const EMOJIS = STICKER_CATS.slice(1).flatMap(c=>c.items);
+    const FONTS = [
+      {name:'黑體', css:'"Noto Sans TC",sans-serif'},
+      {name:'明體', css:'"Noto Serif TC",serif'},
+      {name:'細明', css:'"Zen Kaku Gothic New",sans-serif'},
+      {name:'Serif', css:'"IM Fell English",serif'},
+    ];
+    const PRESETS = [
+      {name:'原圖',  extra:'',                   b:100,c:100,s:100},
+      {name:'黑白',  extra:'grayscale(1)',        b:100,c:108,s:100},
+      {name:'復古',  extra:'sepia(0.45)',         b:103,c:105,s:108},
+      {name:'冷調',  extra:'hue-rotate(-18deg)',  b:100,c:100,s:110},
+      {name:'暖調',  extra:'sepia(0.28)',         b:104,c:100,s:120},
+      {name:'褪色',  extra:'',                   b:115,c:78, s:80 },
+      {name:'霧感',  extra:'blur(0px)',           b:108,c:88, s:90 },
+      {name:'底片',  extra:'sepia(0.2) hue-rotate(5deg)', b:105,c:110,s:95},
+    ];
+    const TEXTCOLORS = ['#2c2722','#ffffff','#c0392b','#7c6b52','#4a6741','#2c5f8a','#a06080'];
+
+    // ── 12 Layout definitions ──────────────────────────────────────
+    const LAYOUTS = [
+      {name:'均分格', auto:true},
+      {name:'雙欄',   cols:2},
+      {name:'三欄',   cols:3},
+      {name:'橫列',   rows:true},
+      {name:'主圖左', feature:'left'},
+      {name:'主圖上', feature:'top'},
+      {name:'黃金比', golden:true},
+      {name:'馬賽克', mosaic:true},
+      {name:'雜誌版', magazine:true},
+      {name:'錯位格', stagger:true},
+      {name:'散佈',   scatter:true},
+      {name:'全景條', panorama:true},
+    ];
+
+    // Icon [left,top,width,height] as 0–1 fractions, leaving ~18% bottom for label
+    const H = 0.78; // usable icon height
+    const LAY_ICONS = [
+      [[0,0,.49,H*.49],[.51,0,.49,H*.49],[0,H*.51,.49,H*.49],[.51,H*.51,.49,H*.49]],
+      [[0,0,.49,H],[.51,0,.49,H]],
+      [[0,0,.32,H],[.34,0,.32,H],[.68,0,.32,H]],
+      [[0,0,1,H*.48],[0,H*.52,1,H*.48]],
+      [[0,0,.6,H],[.62,0,.38,H*.48],[.62,H*.52,.38,H*.48]],
+      [[0,0,1,H*.58],[0,H*.62,.48,H*.38],[.52,H*.62,.48,H*.38]],
+      [[0,0,.62,H],[.64,0,.36,H*.58],[.64,H*.62,.36,H*.38]],
+      [[0,0,.49,H*.62],[.51,0,.49,H*.44],[.51,H*.47,.49,H*.31],[0,H*.65,.32,H*.35],[.34,H*.65,.15,H*.35]],
+      [[0,0,1,H*.52],[0,H*.55,.32,H*.45],[.34,H*.55,.32,H*.45],[.68,H*.55,.32,H*.45]],
+      [[0,H*.12,.32,H*.76],[.34,0,.32,H*.76],[.68,H*.12,.32,H*.76]],
+      [[.04,.06,.42,.4],[.44,.16,.42,.4],[.1,.46,.42,.4],[.48,.44,.42,.4]],
+      [[0,H*.28,1,H*.44]],
+    ];
+
+    let project = { pages:[newPage()], active:0 };
+    let selected = null;
+    let saveTimer = null;
+    let activeLayoutIdx = -1;
+
+    function newPage(){ return { ratio:1, bg:'#ffffff', items:[], z:1 }; }
+    function pg(){ return project.pages[project.active]; }
+    function uid(){ return 'i'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36); }
+
+    // ── Stage sizing ───────────────────────────────────────────────
+    function fitStage(){
+      const pad = 48;
+      const aW = stagearea.clientWidth - pad*2;
+      const aH = stagearea.clientHeight - pad*2;
+      const r = pg().ratio;
+      let w = aW, h = w/r;
+      if(h > aH){ h = aH; w = h*r; }
+      w = Math.max(160,w); h = Math.max(160,h);
+      stage.style.width = w+'px'; stage.style.height = h+'px';
+    }
+
+    // ── Item creation ──────────────────────────────────────────────
+    // 非 data: 的網路圖片需允許跨來源,匯出 PNG 時畫布才不會被污染
+    function newImg(src){ const im=new Image(); if(!/^data:/.test(src)) im.crossOrigin='anonymous'; im.src=src; return im; }
+
+    function addPhoto(src, idx){
+      const img = new Image();
+      const cross = !/^data:/.test(src);
+      if(cross) img.crossOrigin='anonymous';
+      // 若跨來源載入失敗(該來源未開放 CORS),改用無 CORS 重載以確保能顯示
+      img.onerror = function(){
+        if(cross && img.crossOrigin){ img.crossOrigin=null; img.src=src; return; }
+        toast('圖片載入失敗');
+      };
+      img.onload = function(){
+        const sW = stage.clientWidth, sH = stage.clientHeight;
+        const nr = img.naturalWidth/img.naturalHeight;
+        let w = Math.min(sW*.55, img.naturalWidth), h = w/nr;
+        if(h > sH*.8){ h = sH*.8; w = h*nr; }
+        const j = (Math.random()-.5);
+        // 多張匯入時階梯錯開,避免全部疊在同一位置
+        const step = (idx||0)*32;
+        const it = {id:uid(),type:'photo',src,img,
+          x:(sW-w)/2+j*36+step, y:(sH-h)/2+j*36+step, w, h, rot:j*5, flip:1, z:++pg().z,
+          shadow:true, round:false, border:false,
+          filter:{extra:'',b:100,c:100,s:100}};
+        pg().items.push(it); buildEl(it); select(it); refresh();
+      };
+      img.src = src;
+    }
+
+    function addText(str){
+      const it = {id:uid(),type:'text',
+        x:stage.clientWidth/2-90, y:stage.clientHeight/2-24,
+        w:180, h:50, rot:0, flip:1, z:++pg().z,
+        text:str||'雙擊編輯文字',
+        color:'#2c2722', font:FONTS[0].css, weight:500, fontSize:30};
+      pg().items.push(it); buildEl(it); select(it); refresh();
+      setTimeout(()=>enterEdit(it),40);
+    }
+
+    function addSticker(glyph){
+      const size = 60;
+      const it = {id:uid(),type:'sticker',
+        x:stage.clientWidth/2-size/2, y:stage.clientHeight/2-size/2,
+        w:size, h:size, rot:0, flip:1, z:++pg().z, glyph};
+      pg().items.push(it); buildEl(it); select(it); refresh();
+    }
+    function addStickerImg(src, idx){
+      const img = new Image();
+      img.onload = function(){
+        const base = 120, nr = img.naturalWidth/img.naturalHeight;
+        let w = base, h = base; if(nr>=1) h = w/nr; else w = h*nr;
+        const step = (idx||0)*28;
+        const it = {id:uid(),type:'sticker',src,img,
+          x:stage.clientWidth/2-w/2+step, y:stage.clientHeight/2-h/2+step,
+          w, h, rot:0, flip:1, z:++pg().z};
+        pg().items.push(it); buildEl(it); select(it); refresh();
+      };
+      img.src = src;
+    }
+
+    function buildEl(it){
+      const el = document.createElement('div');
+      el.className = 'item '+it.type; el.dataset.id = it.id;
+      let inner = '';
+      if(it.type==='photo')   inner = '<img alt=""><div class="frame"></div>';
+      if(it.type==='text')    inner = '<div class="txt"></div>';
+      if(it.type==='sticker') inner = '<div class="glyph"></div>';
+      inner += '<div class="ctrl"><div class="outline"></div><div class="rstem"></div>'+
+        '<div class="rotate" data-role="rotate"></div>'+
+        '<div class="handle tl" data-role="resize" data-corner="tl"></div>'+
+        '<div class="handle tr" data-role="resize" data-corner="tr"></div>'+
+        '<div class="handle bl" data-role="resize" data-corner="bl"></div>'+
+        '<div class="handle br" data-role="resize" data-corner="br"></div></div>';
+      el.innerHTML = inner;
+      stage.appendChild(el); it.el = el;
+      if(it.type==='photo'){
+        it.imgEl = el.querySelector('img'); it.imgEl.src = it.src;
+        if(!it.img){ it.img = newImg(it.src); }
+        it.frameEl = el.querySelector('.frame'); applyPhoto(it);
+      }
+      if(it.type==='text')    { it.txtEl   = el.querySelector('.txt');   applyText(it); }
+      if(it.type==='sticker') {
+        it.glyphEl = el.querySelector('.glyph');
+        if(it.src){
+          it.glyphEl.style.width = it.glyphEl.style.height = '100%';
+          it.glyphEl.innerHTML = '<img alt="" style="width:100%;height:100%;object-fit:contain;pointer-events:none">';
+          it.glyphEl.firstChild.src = it.src;
+          if(!it.img){ it.img = newImg(it.src); }
+        } else { it.glyphEl.textContent = it.glyph; }
+      }
+      render(it);
+      el.addEventListener('pointerdown', e=>{
+        const role = e.target.dataset.role;
+        if(role==='resize') startResize(e,it,e.target.dataset.corner);
+        else if(role==='rotate') startRotate(e,it);
+        else if(it.type==='text' && it.el.classList.contains('editing')) return;
+        else startDrag(e,it);
+      });
+      if(it.type==='text') el.addEventListener('dblclick', ()=>enterEdit(it));
+    }
+
+    function render(it){
+      it.el.style.cssText += `;left:${it.x}px;top:${it.y}px;width:${it.w}px;height:${it.h}px;transform:rotate(${it.rot}deg);z-index:${it.z}`;
+      if(it.type==='photo') it.imgEl.style.transform = `scaleX(${it.flip})`;
+      if(it.type==='sticker'){
+        if(!it.src) it.glyphEl.style.fontSize = Math.min(it.w,it.h)*.86+'px';
+        it.glyphEl.style.transform = `scaleX(${it.flip})`;
+      }
+      if(it.type==='text') it.el.style.fontSize = it.fontSize+'px';
+    }
+
+    function filterStr(f){
+      return (f.extra ? f.extra+' ':'')+`brightness(${f.b/100}) contrast(${f.c/100}) saturate(${f.s/100})`;
+    }
+
+    function applyPhoto(it){
+      it.el.style.borderRadius = it.round ? '14px' : '1px';
+      it.frameEl.style.boxShadow = it.shadow ? 'var(--sp)' : 'none';
+      it.imgEl.style.filter = filterStr(it.filter);
+      if(it.border){ it.el.style.background='#fff'; it.el.style.padding='9px'; it.imgEl.style.borderRadius = it.round?'6px':'0'; }
+      else { it.el.style.background=''; it.el.style.padding='0'; }
+    }
+
+    function applyText(it){
+      it.txtEl.textContent = it.text;
+      it.el.style.color = it.color;
+      it.el.style.fontFamily = it.font;
+      it.el.style.fontWeight = it.weight;
+      it.el.style.fontSize = it.fontSize+'px';
+    }
+
+    // ── Selection ─────────────────────────────────────────────────
+    function select(it){
+      if(selected && selected.el) selected.el.classList.remove('selected');
+      selected = it;
+      if(it){ it.el.classList.add('selected'); bringFront(it); quickbar.classList.add('show'); }
+      else quickbar.classList.remove('show');
+      qs('#dupBtn').disabled = !it;
+      updateContextPanels();
+    }
+    function updateContextPanels(){
+      const isPhoto = selected && selected.type==='photo';
+      const isText  = selected && selected.type==='text';
+      qs('#filterGroup').classList.toggle('hidden', !isPhoto);
+      qs('#textGroup').classList.toggle('hidden', !isText);
+      if(isPhoto) syncFilterUI();
+      if(isText)  syncTextUI();
+    }
+    stage.addEventListener('pointerdown', e=>{ if(e.target===stage) select(null); });
+    stagearea.addEventListener('pointerdown', e=>{ if(e.target===stagearea || e.target===qs('#ws_stagewrap')) select(null); });
+
+    // ── Gesture engine ────────────────────────────────────────────
+    function pt(e){ const r=stage.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+    let _dragging = false, _capEl=null, _capId=null;
+
+    function endGesture(move, it, pid){
+      _dragging = true;
+      if(it && pid!=null){ try{ it.el.setPointerCapture(pid); _capEl=it.el; _capId=pid; }catch(_){} }
+      const up=()=>{
+        _dragging=false;
+        if(_capEl && _capId!=null){ try{ _capEl.releasePointerCapture(_capId); }catch(_){} _capEl=null; _capId=null; }
+        window.removeEventListener('pointermove',move);
+        window.removeEventListener('pointerup',up);
+        window.removeEventListener('pointercancel',up);
+        scheduleSave();
+      };
+      window.addEventListener('pointermove',move);
+      window.addEventListener('pointerup',up);
+      window.addEventListener('pointercancel',up);
+    }
+    document.addEventListener('touchmove', e=>{ if(_dragging) e.preventDefault(); },{passive:false});
+
+    function startDrag(e,it){
+      e.preventDefault(); select(it);
+      const s=pt(e), ox=it.x, oy=it.y;
+      endGesture(ev=>{ const p=pt(ev); it.x=ox+(p.x-s.x); it.y=oy+(p.y-s.y); render(it); },it,e.pointerId);
+    }
+
+    function startResize(e,it,corner){
+      e.preventDefault(); e.stopPropagation(); select(it);
+      if(it.type==='text'||it.type==='sticker'){
+        const cx=it.x+it.w/2, cy=it.y+it.h/2;
+        const s=pt(e); const d0=Math.max(12,Math.hypot(s.x-cx,s.y-cy));
+        const w0=it.w, h0=it.h, fs0=it.fontSize||0;
+        endGesture(ev=>{ const p=pt(ev); const d=Math.hypot(p.x-cx,p.y-cy); let k=d/d0;
+          if(w0*k<28)k=28/w0; it.w=w0*k; it.h=h0*k;
+          if(it.type==='text') it.fontSize=Math.max(8,fs0*k);
+          it.x=cx-it.w/2; it.y=cy-it.h/2; render(it); },it,e.pointerId);
+        return;
+      }
+      const rad=it.rot*Math.PI/180, ux={x:Math.cos(rad),y:Math.sin(rad)}, uy={x:-Math.sin(rad),y:Math.cos(rad)};
+      const cx=it.x+it.w/2, cy=it.y+it.h/2;
+      const sx=corner.includes('r')?1:-1, sy=corner.includes('b')?1:-1;
+      const F={x:cx-ux.x*sx*it.w/2-uy.x*sy*it.h/2, y:cy-ux.y*sx*it.w/2-uy.y*sy*it.h/2};
+      const w0=it.w, h0=it.h, L0=Math.hypot(w0,h0);
+      const diag={x:(sx*w0*ux.x+sy*h0*uy.x)/L0, y:(sx*w0*ux.y+sy*h0*uy.y)/L0};
+      endGesture(ev=>{ const p=pt(ev); const d={x:p.x-F.x,y:p.y-F.y};
+        let proj=d.x*diag.x+d.y*diag.y; let k=proj/L0;
+        if(w0*k<40)k=40/w0; const nw=w0*k, nh=h0*k;
+        const ncx=F.x+ux.x*sx*nw/2+uy.x*sy*nh/2, ncy=F.y+ux.y*sx*nw/2+uy.y*sy*nh/2;
+        it.w=nw; it.h=nh; it.x=ncx-nw/2; it.y=ncy-nh/2; render(it); },it,e.pointerId);
+    }
+
+    function startRotate(e,it){
+      e.preventDefault(); e.stopPropagation(); select(it);
+      const rect=it.el.getBoundingClientRect(), cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+      endGesture(ev=>{ let a=Math.atan2(ev.clientY-cy,ev.clientX-cx)*180/Math.PI+90;
+        if(ev.shiftKey)a=Math.round(a/15)*15; it.rot=a; render(it); },it,e.pointerId);
+    }
+
+    // ── Text editing ───────────────────────────────────────────────
+    function enterEdit(it){
+      select(it); it.el.classList.add('editing'); it.txtEl.contentEditable='true'; it.txtEl.focus();
+      const rng=document.createRange(); rng.selectNodeContents(it.txtEl);
+      const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(rng);
+      const done=()=>{
+        it.txtEl.contentEditable='false'; it.el.classList.remove('editing');
+        it.text=it.txtEl.textContent.trim()||'文字'; it.txtEl.textContent=it.text;
+        it.txtEl.removeEventListener('blur',done); render(it); scheduleSave();
+      };
+      it.txtEl.addEventListener('blur',done);
+    }
+
+    // ── Layer actions ──────────────────────────────────────────────
+    function bringFront(it){ it.z=++pg().z; it.el.style.zIndex=it.z; }
+    function sendBack(it){ let min=Infinity; pg().items.forEach(q=>min=Math.min(min,q.z)); it.z=min-1; it.el.style.zIndex=it.z; }
+    function removeItem(it){ it.el.remove(); pg().items=pg().items.filter(q=>q!==it); if(selected===it) select(null); refresh(); scheduleSave(); }
+
+    qs('#qFront').onclick  = ()=>selected&&(bringFront(selected),scheduleSave());
+    qs('#qBack').onclick   = ()=>selected&&(sendBack(selected),scheduleSave());
+    qs('#qDelete').onclick = ()=>selected&&removeItem(selected);
+    qs('#qFlip').onclick   = ()=>{ if(selected){selected.flip*=-1;render(selected);scheduleSave();} };
+    qs('#qReset').onclick  = ()=>{ if(selected){selected.rot=0;render(selected);scheduleSave();} };
+    qs('#dupBtn').onclick  = ()=>{
+      if(!selected)return;
+      const c=JSON.parse(JSON.stringify(stripItem(selected)));
+      c.id=uid(); c.x+=22; c.y+=22; c.z=++pg().z;
+      pg().items.push(c); buildEl(c); select(c); scheduleSave();
+    };
+
+    // ── Add / drag-drop ───────────────────────────────────────────
+    qs('#addBtn').onclick     = ()=>fileInput.click();
+    qs('#addTextBtn').onclick = ()=>addText();
+    fileInput.onchange = function(){ handleFiles(this.files); this.value=''; };
+    function handleFiles(files){
+      const imgs = [...files].filter(f=>f.type.startsWith('image/'));
+      imgs.forEach((f,i)=>{
+        const rd=new FileReader(); rd.onload=e=>addPhoto(e.target.result,i); rd.readAsDataURL(f); });
+    }
+    workspace.addEventListener('dragover',  e=>{ e.preventDefault(); workspace.classList.add('over'); });
+    workspace.addEventListener('dragleave', e=>{ if(e.target===workspace) workspace.classList.remove('over'); });
+    workspace.addEventListener('drop', e=>{
+      e.preventDefault(); workspace.classList.remove('over');
+      if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+    });
+
+    // Emojis
+    const emoWrap = qs('#emojis');
+    const catWrap = qs('#stickerCats');
+    // 自訂貼圖:上傳自己的圖檔(此鈕每次重繪後都移到格子最後)
+    const addSticBtn = document.createElement('button');
+    addSticBtn.textContent = '＋'; addSticBtn.title = '上傳自訂貼圖';
+    addSticBtn.className = 'add-sticker';
+    addSticBtn.onclick = ()=>stickerInput.click();
+    // items 為 [emoji, 關鍵字] tuple 陣列
+    function renderStickerGrid(items){
+      emoWrap.innerHTML = '';
+      if(!items.length){
+        emoWrap.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:12px 0;font-size:11px;color:var(--soft)">找不到符合的貼圖</div>';
+        emoWrap.appendChild(addSticBtn); return;
+      }
+      items.forEach(([g,kw])=>{
+        const b=document.createElement('button'); b.textContent=g; b.title=kw||''; b.onclick=()=>addSticker(g);
+        emoWrap.appendChild(b);
+      });
+      emoWrap.appendChild(addSticBtn); // 上傳鈕永遠在最後
+    }
+    function renderStickerCat(key){
+      activeStickerCat = key;
+      [...catWrap.querySelectorAll('.scat')].forEach(b=>b.classList.toggle('active', b.dataset.key===key));
+      renderStickerGrid(key==='all' ? EMOJIS : (STICKER_CATS.find(c=>c.key===key)?.items || []));
+    }
+    STICKER_CATS.forEach(cat=>{
+      const b=document.createElement('button');
+      b.className='scat'+(cat.key==='all'?' active':'');
+      b.dataset.key=cat.key; b.textContent=cat.name;
+      b.onclick=()=>renderStickerCat(cat.key);
+      catWrap.appendChild(b);
+    });
+    renderStickerCat('all');
+
+    // 貼圖搜尋:先過濾內建貼圖,再從擴充資料集(emoji-data.js,離線)補上更多 emoji
+    const stickerSearchEl = qs('#stickerQ');
+
+    // 擴充搜尋資料集(來自 emoji-data.js 的 window.EMOJI_SEARCH):[emoji, 中文關鍵字]
+    // 首次搜尋時預先把關鍵字轉小寫並快取,之後每次搜尋皆為離線即時比對。
+    let EMOJI_DB=null;
+    function getEmojiDB(){
+      if(EMOJI_DB) return EMOJI_DB;
+      const src=(typeof window!=='undefined' && window.EMOJI_SEARCH) || [];
+      EMOJI_DB=src.map(([e,kw])=>({ e, kw:(kw||'').toLowerCase() }));
+      return EMOJI_DB;
+    }
+
+    function filterStickers(q){
+      q=(q||'').trim().toLowerCase();
+      if(!q){ renderStickerCat(activeStickerCat); return; }
+      [...catWrap.querySelectorAll('.scat')].forEach(b=>b.classList.remove('active'));
+      const seen=new Set(), builtin=[], extra=[];
+      // 內建貼圖優先
+      EMOJIS.forEach(([g,kw])=>{ if((g===q || (kw && kw.toLowerCase().includes(q))) && !seen.has(g)){ seen.add(g); builtin.push([g,kw]); } });
+      // 擴充資料集(排除已出現者,上限 300)
+      for(const it of getEmojiDB()){ if(extra.length>=300) break; if(!it.e || seen.has(it.e) || !it.kw.includes(q)) continue; seen.add(it.e); extra.push(it); }
+      emoWrap.innerHTML='';
+      const mk=(g,kw)=>{ const b=document.createElement('button'); b.textContent=g; b.title=kw||''; b.onclick=()=>addSticker(g); emoWrap.appendChild(b); };
+      if(!builtin.length && !extra.length){
+        emoWrap.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:12px 0;font-size:11px;color:var(--soft)">找不到符合的貼圖</div>';
+        emoWrap.appendChild(addSticBtn); return;
+      }
+      builtin.forEach(([g,kw])=>mk(g,kw));
+      if(extra.length){
+        const sep=document.createElement('div');
+        sep.style.cssText='grid-column:1/-1;text-align:center;font-size:9.5px;letter-spacing:.1em;color:var(--soft);padding:7px 0 3px;margin-top:4px;border-top:1px dashed var(--pl)';
+        sep.textContent='更多結果 · '+extra.length+' 個';
+        emoWrap.appendChild(sep);
+        extra.forEach(it=>mk(it.e, it.kw));
+      }
+      emoWrap.appendChild(addSticBtn);
+    }
+    if(stickerSearchEl){
+      stickerSearchEl.addEventListener('input', ()=>filterStickers(stickerSearchEl.value));
+      stickerSearchEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); filterStickers(stickerSearchEl.value); } });
+      const goBtn = qs('#stickerGo'); if(goBtn) goBtn.onclick=()=>filterStickers(stickerSearchEl.value);
+    }
+    stickerInput.onchange = function(){
+      [...this.files].filter(f=>f.type.startsWith('image/')).forEach((f,i)=>{
+        const rd=new FileReader(); rd.onload=e=>addStickerImg(e.target.result,i); rd.readAsDataURL(f); });
+      this.value='';
+    };
+
+    // ── 雲端圖庫(Pixabay)──────────────────────────────────────
+    // 【公開分享設定】部署 Cloudflare Worker 後,把它的網址填在這裡。
+    // 填了 → 走 proxy,金鑰藏在伺服器,使用者零設定、也偷不到金鑰。
+    // 留空 → 走「本機自填金鑰」模式(只適合自己或技術使用者)。
+    const PROXY_URL='https://pixabay-proxy.charlie88556.workers.dev/';  // Cloudflare Worker(金鑰藏伺服器端)
+
+    const KEY_STORE='pixabayApiKey';
+    const getCloudKey=()=>{ try{return localStorage.getItem(KEY_STORE)||'';}catch(e){return '';} };
+    const setCloudKey=k=>{ try{localStorage.setItem(KEY_STORE,k);}catch(e){} };
+
+    function promptKey(){
+      const k=(window.prompt('請貼上你的 Pixabay API 金鑰\n免費申請:https://pixabay.com/api/docs/', getCloudKey())||'').trim();
+      if(k){ setCloudKey(k); toast('金鑰已儲存'); }
+      return k;
+    }
+    function ensureKey(){ return getCloudKey() || promptKey(); }
+
+    // 組出查詢網址:有 proxy 走 proxy(金鑰藏伺服器),否則用本機金鑰
+    function pixabayURL(q, page, imageType){
+      const query='q='+encodeURIComponent(q)+'&image_type='+imageType+'&safesearch=true&per_page=21&page='+page;
+      if(PROXY_URL) return PROXY_URL+(PROXY_URL.includes('?')?'&':'?')+query;
+      const key=ensureKey(); if(!key) return null;
+      return 'https://pixabay.com/api/?key='+encodeURIComponent(key)+'&'+query;
+    }
+
+    // 可重用的雲端搜尋面板(照片 / 貼圖共用)
+    function makeCloudPanel(cfg){
+      const input=qs(cfg.input), results=qs(cfg.results), hint=cfg.hint?qs(cfg.hint):null;
+      let page=1, lastQ='', busy=false;
+      const setHint=t=>{ if(hint) hint.textContent=t; };
+      const shuffle=a=>{ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+      async function run(q, p, isFirst){
+        const url=pixabayURL(q, p, cfg.imageType);
+        if(!url) return;              // 非 proxy 模式但未設定金鑰
+        if(busy) return; busy=true;
+        setHint('搜尋中…');
+        try{
+          const r=await fetch(url);
+          if(!r.ok){
+            if(r.status===400 && !PROXY_URL){ setCloudKey(''); toast('金鑰無效,請重新設定'); }
+            else toast('搜尋失敗('+r.status+')');
+            busy=false; return;
+          }
+          const data=await r.json();
+          const hits=data.hits||[];
+          // 隨機起始頁若沒圖(冷門關鍵字),自動退回第一頁
+          if(isFirst && !hits.length && p>1){ busy=false; page=1; run(q,1,false); return; }
+          render(shuffle(hits.slice()), false);   // 洗牌;每批都直接取代畫面(不累加)
+          setHint(hits.length? ('約 '+data.totalHits+' 張結果'+cfg.tail) : '找不到符合的素材');
+        }catch(e){ toast('無法連線圖庫'); setHint('連線失敗,請稍後再試'); }
+        busy=false;
+      }
+      function render(hits, append){
+        const old=results.querySelector('.more'); if(old) old.remove();
+        if(!append) results.innerHTML='';
+        hits.forEach(h=>{
+          const im=document.createElement('img'); im.src=h.previewURL; im.loading='lazy'; im.title=h.tags||'';
+          im.onclick=()=>{ cfg.onPick(h.webformatURL||h.largeImageURL||h.previewURL); toast('已加入畫布'); };
+          results.appendChild(im);
+        });
+        if(hits.length>=21){
+          const m=document.createElement('div'); m.className='more'; m.textContent='換一批';
+          m.onclick=()=>{ page++; run(lastQ, page, false); };
+          results.appendChild(m);
+        }
+      }
+      // 每次搜尋從隨機頁開始 → 結果不固定
+      function search(){ const q=input.value.trim(); if(!q){ toast('請輸入關鍵字'); return; } lastQ=q; page=1+Math.floor(Math.random()*6); run(q,page,true); }
+      qs(cfg.go).onclick=search;
+      input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); search(); } });
+      return { setHint, elHint:hint };
+    }
+
+    // 照片面板:一般照片,加成「照片」
+    const photoPanel = makeCloudPanel({
+      input:'#cloudQ', go:'#cloudGo', results:'#cloudResults', hint:'#cloudHint',
+      imageType:'all', tail:',點縮圖加入畫布', onPick:src=>addPhoto(src) });
+    // (貼圖搜尋已改為過濾內建貼圖,見上方 filterStickers;雲端插圖請用下方 Iconify / 圖庫)
+
+    function bindKeyLink(){ const l=qs('#cloudKeyLink'); if(l) l.onclick=e=>{ e.preventDefault(); promptKey(); }; }
+    if(PROXY_URL){ photoPanel.setHint('輸入關鍵字搜尋,點縮圖即加入畫布。'); }
+    else bindKeyLink();
+
+    // ── 雲端圖示(Iconify,免金鑰、開源向量 SVG)──────────────────
+    const ICON_COLORS=['#2c2722','#7c6b52','#c0392b','#d98c34','#2e7d5b','#2e6da4','#8e44ad','#ffffff'];
+    let iconColor=ICON_COLORS[0];
+    function iconUrl(name, size){
+      const i=name.indexOf(':');
+      const path = i<0 ? name : name.slice(0,i)+'/'+name.slice(i+1);
+      return 'https://api.iconify.design/'+path+'.svg?height='+size+'&color='+encodeURIComponent(iconColor);
+    }
+    (function buildIconPanel(){
+      const input=qs('#iconQ'), results=qs('#iconResults'), hint=qs('#iconHint'), colors=qs('#iconColors');
+      const BATCH=30;
+      let busy=false, pool=[], batchStart=0;
+      const shuffle=a=>{ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+      // 顏色選擇
+      ICON_COLORS.forEach((c,idx)=>{
+        const d=document.createElement('div'); d.className='sw'+(idx===0?' active':''); d.style.background=c; d.title=c;
+        d.onclick=()=>{ iconColor=c; [...colors.children].forEach(x=>x.classList.remove('active')); d.classList.add('active'); showBatch(); };
+        colors.appendChild(d);
+      });
+      // 自訂顏色(系統色環/色盤)
+      const cust=document.createElement('label'); cust.className='sw-custom'; cust.title='自訂顏色';
+      cust.innerHTML='<span>+</span><input type="color" value="'+iconColor+'">';
+      cust.querySelector('input').addEventListener('input',e=>{ iconColor=e.target.value; [...colors.children].forEach(x=>x.classList.remove('active')); showBatch(); });
+      colors.appendChild(cust);
+      // 顯示目前這一批(從素材池切一段);顏色改變時也用它重畫
+      function showBatch(){
+        results.innerHTML='';
+        pool.slice(batchStart, batchStart+BATCH).forEach(name=>{
+          const im=document.createElement('img'); im.src=iconUrl(name,40); im.loading='lazy'; im.title=name;
+          im.onclick=()=>addIcon(name);
+          results.appendChild(im);
+        });
+        if(pool.length>BATCH){
+          const m=document.createElement('div'); m.className='more'; m.textContent='換一批';
+          m.onclick=()=>{ batchStart+=BATCH; if(batchStart>=pool.length) batchStart=0; showBatch(); };
+          results.appendChild(m);
+        }
+      }
+      async function addIcon(name){
+        try{
+          const r=await fetch(iconUrl(name,240));
+          if(!r.ok){ toast('圖示載入失敗'); return; }
+          const svg=await r.text();
+          const dataUrl='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+          addStickerImg(dataUrl); toast('已加入貼圖');
+        }catch(e){ toast('圖示載入失敗'); }
+      }
+      async function search(){
+        const q=input.value.trim(); if(!q){ toast('請輸入關鍵字'); return; }
+        if(busy) return; busy=true; hint.textContent='搜尋中…';
+        try{
+          const r=await fetch('https://api.iconify.design/search?query='+encodeURIComponent(q)+'&limit=120');
+          if(!r.ok){ toast('搜尋失敗('+r.status+')'); hint.textContent=''; busy=false; return; }
+          const data=await r.json();
+          pool=shuffle((data.icons||[]).slice()); batchStart=0; showBatch();
+          hint.textContent=pool.length? ('約 '+pool.length+' 個圖示,點一下加成貼圖'+(pool.length>BATCH?',或按「換一批」':'')) : '找不到符合的圖示';
+        }catch(e){ toast('無法連線圖示庫'); hint.textContent='連線失敗,請稍後再試'; }
+        busy=false;
+      }
+      qs('#iconGo').onclick=search;
+      input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); search(); } });
+    })();
+
+    // ── Layout icons builder ───────────────────────────────────────
+    const layWrap = qs('#layouts');
+    LAYOUTS.forEach((L,i)=>{
+      const d = document.createElement('div'); d.className='lay'; d.title=L.name;
+      LAY_ICONS[i].forEach(r=>{
+        const s=document.createElement('i');
+        s.style.left   = (r[0]*100)+'%';
+        s.style.top    = (r[1]*100)+'%';
+        s.style.width  = (r[2]*100-.5)+'%';
+        s.style.height = (r[3]*100-.5)+'%';
+        d.appendChild(s);
+      });
+      const nm=document.createElement('span'); nm.className='lay-name'; nm.textContent=L.name; d.appendChild(nm);
+      d.onclick=()=>{ [...layWrap.children].forEach(c=>c.classList.remove('active')); d.classList.add('active'); applyLayout(L,i); };
+      layWrap.appendChild(d);
+    });
+
+    let gap=10;
+    qs('#gapRange').addEventListener('input', e=>{ gap=+e.target.value; qs('#gapVal').textContent=gap; });
+
+    // ── Layout algorithms ──────────────────────────────────────────
+    function applyLayout(L, idx){
+      const photos = pg().items.filter(it=>it.type==='photo');
+      if(!photos.length){ toast('請先加入照片'); return; }
+      const W=stage.clientWidth, H=stage.clientHeight, g=gap, n=photos.length;
+      const cells=[];
+
+      if(L.scatter){
+        // Polaroid scatter: grid base + random jitter + rotation
+        const cols=Math.ceil(Math.sqrt(n)), rows=Math.ceil(n/cols);
+        const size=Math.min(W/cols, H/rows)*0.78;
+        photos.forEach((it,k)=>{
+          const col=k%cols, row=Math.floor(k/cols);
+          const cw=W/cols, ch=H/rows;
+          const jx=(Math.random()-.5)*cw*.28;
+          const jy=(Math.random()-.5)*ch*.28;
+          it.w=size; it.h=size*.88;
+          it.x=col*cw+(cw-it.w)/2+jx;
+          it.y=row*ch+(ch-it.h)/2+jy;
+          it.rot=(Math.random()-.5)*18;
+          render(it);
+        });
+        scheduleSave(); return;
+      }
+
+      if(L.panorama){
+        // All photos in a horizontal strip at vertical center
+        const h=H*.42; const totalW=(W-(n-1)*g)/n;
+        photos.forEach((it,k)=>{ cells.push([k*(totalW+g),(H-h)/2,totalW,h]); });
+      } else if(L.golden){
+        // Fibonacci-inspired: first photo 62% width, rest stacked right
+        const w1=W*.62-g/2;
+        cells.push([0,0,w1,H]);
+        const rest=n-1; if(rest>0){ const rh=(H-(rest-1)*g)/rest;
+          for(let k=0;k<rest;k++) cells.push([w1+g, k*(rh+g), W-w1-g, rh]); }
+      } else if(L.magazine){
+        // 1 wide top + row of small below
+        if(n===1){ cells.push([0,0,W,H]); }
+        else {
+          const bh=H*.54-g/2; cells.push([0,0,W,bh]);
+          const rest=n-1; const cw=(W-(rest-1)*g)/rest;
+          for(let k=0;k<rest;k++) cells.push([k*(cw+g), bh+g, cw, H-bh-g]);
+        }
+      } else if(L.mosaic){
+        // Mondrian-style: alternating wider/narrower in rows
+        const rows=Math.ceil(n/3); let idx2=0;
+        for(let r=0;r<rows&&idx2<n;r++){
+          const inRow=Math.min(r%2===0?3:2, n-idx2);
+          const rh=(H-(rows-1)*g)/rows, ry=r*(rh+g);
+          const weights=[];
+          for(let c=0;c<inRow;c++) weights.push(c%2===0?1.3:.8);
+          const wSum=weights.reduce((a,b)=>a+b,0);
+          let x=0;
+          for(let c=0;c<inRow;c++){
+            const cw=(W-(inRow-1)*g)*weights[c]/wSum;
+            cells.push([x,ry,cw,rh]); x+=cw+g; idx2++;
+          }
+        }
+      } else if(L.stagger){
+        // 3-column staggered (every other col shifted down)
+        const cols=Math.min(3,n); const rows=Math.ceil(n/cols);
+        const cw=(W-(cols-1)*g)/cols; const rh=(H-(rows-1)*g)/rows;
+        const shift=rh*.18;
+        photos.forEach((it,k)=>{
+          const c=k%cols, r=Math.floor(k/cols);
+          const yOff=c%2===1?shift:0;
+          cells.push([c*(cw+g), r*(rh+g)+yOff, cw, rh]);
+        });
+      } else if(L.feature){
+        const isLeft=L.feature==='left';
+        if(n===1){ cells.push([0,0,W,H]); }
+        else {
+          if(isLeft){ const bw=W*.6-g/2; cells.push([0,0,bw,H]);
+            const rest=n-1; const rh=(H-(rest-1)*g)/rest;
+            for(let k=0;k<rest;k++) cells.push([bw+g, k*(rh+g), W-bw-g, rh]); }
+          else { const bh=H*.6-g/2; cells.push([0,0,W,bh]);
+            const rest=n-1; const cw=(W-(rest-1)*g)/rest;
+            for(let k=0;k<rest;k++) cells.push([k*(cw+g), bh+g, cw, H-bh-g]); }
+        }
+      } else if(L.rows){
+        const rh=(H-(n-1)*g)/n;
+        for(let k=0;k<n;k++) cells.push([0, k*(rh+g), W, rh]);
+      } else if(L.cols){
+        const cols=Math.min(L.cols,n); const rows=Math.ceil(n/cols);
+        const cw=(W-(cols-1)*g)/cols; const rh=(H-(rows-1)*g)/rows;
+        for(let k=0;k<n;k++){ const r=Math.floor(k/cols),c=k%cols; cells.push([c*(cw+g), r*(rh+g), cw, rh]); }
+      } else {
+        // auto: square grid
+        const cols=Math.ceil(Math.sqrt(n)); const rows=Math.ceil(n/cols);
+        const cw=(W-(cols-1)*g)/cols; const rh=(H-(rows-1)*g)/rows;
+        for(let k=0;k<n;k++){ const r=Math.floor(k/cols),c=k%cols; cells.push([c*(cw+g), r*(rh+g), cw, rh]); }
+      }
+
+      photos.forEach((it,k)=>{
+        const c=cells[k]||cells[cells.length-1];
+        it.x=c[0]; it.y=c[1]; it.w=c[2]; it.h=c[3]; it.rot=0; render(it);
+      });
+      scheduleSave();
+    }
+
+    // ── Ratio / bg ────────────────────────────────────────────────
+    qs('#ratioChips').addEventListener('click', e=>{
+      const c=e.target.closest('.chip'); if(!c)return;
+      [...qs('#ratioChips').children].forEach(x=>x.classList.remove('active')); c.classList.add('active');
+      pg().ratio=parseFloat(c.dataset.r); fitStage(); scheduleSave(); updateResHint();
+    });
+    qs('#swatches').addEventListener('click', e=>{
+      const sw=e.target.closest('.sw'); if(!sw)return; setBg(sw.dataset.c);
+      [...document.querySelectorAll('#swatches .sw')].forEach(s=>s.classList.remove('active')); sw.classList.add('active');
+    });
+    qs('#bgCustom').addEventListener('input', e=>{
+      setBg(e.target.value); document.querySelectorAll('#swatches .sw').forEach(s=>s.classList.remove('active'));
+    });
+    function setBg(c){ pg().bg=c; stage.style.background=c; scheduleSave(); }
+
+    // ── Filters UI ────────────────────────────────────────────────
+    const presetWrap = qs('#presetChips');
+    PRESETS.forEach((p,i)=>{
+      const b=document.createElement('button'); b.className='chip'; b.textContent=p.name; b.dataset.i=i;
+      b.onclick=()=>{
+        if(!selected||selected.type!=='photo')return;
+        const f=selected.filter; f.extra=p.extra; f.b=p.b; f.c=p.c; f.s=p.s;
+        applyPhoto(selected); syncFilterUI(); scheduleSave();
+      };
+      presetWrap.appendChild(b);
+    });
+
+    function bindRange(id,valId,key,suffix){
+      const r=qs('#'+id), v=qs('#'+valId);
+      r.addEventListener('input',()=>{ if(!selected||selected.type!=='photo')return; selected.filter[key]=+r.value; v.textContent=r.value+(suffix||''); applyPhoto(selected); });
+      r.addEventListener('change',scheduleSave);
+    }
+    bindRange('brightRange','brightVal','b','%');
+    bindRange('contrastRange','contrastVal','c','%');
+    bindRange('satRange','satVal','s','%');
+
+    function syncFilterUI(){
+      if(!selected||selected.type!=='photo')return;
+      const f=selected.filter;
+      qs('#brightRange').value=f.b;  qs('#brightVal').textContent=f.b+'%';
+      qs('#contrastRange').value=f.c; qs('#contrastVal').textContent=f.c+'%';
+      qs('#satRange').value=f.s;     qs('#satVal').textContent=f.s+'%';
+      qs('#styleShadow').classList.toggle('active',!!selected.shadow);
+      qs('#styleRound').classList.toggle('active',!!selected.round);
+      qs('#styleBorder').classList.toggle('active',!!selected.border);
+      [...presetWrap.children].forEach(c=>{ const p=PRESETS[+c.dataset.i];
+        c.classList.toggle('active',p.extra===f.extra&&p.b===f.b&&p.c===f.c&&p.s===f.s); });
+      updateRevertBtn();
+    }
+    qs('#styleShadow').onclick=()=>{ if(selected&&selected.type==='photo'){selected.shadow=!selected.shadow;applyPhoto(selected);syncFilterUI();scheduleSave();} };
+    qs('#styleRound').onclick =()=>{ if(selected&&selected.type==='photo'){selected.round=!selected.round;applyPhoto(selected);syncFilterUI();scheduleSave();} };
+    qs('#styleBorder').onclick=()=>{ if(selected&&selected.type==='photo'){selected.border=!selected.border;applyPhoto(selected);syncFilterUI();scheduleSave();} };
+
+    // ── 自動去背 ───────────────────────────────────────────────────
+    function blobToDataURL(blob){ return new Promise(res=>{ const rd=new FileReader(); rd.onload=()=>res(rd.result); rd.readAsDataURL(blob); }); }
+
+    // 載入新的圖片來源到照片項目
+    function setPhotoSrc(it, src){
+      it.src=src;
+      it.img=new Image(); if(!/^data:/.test(src)) it.img.crossOrigin='anonymous';
+      it.img.onload=()=>refresh(); it.img.src=src;
+      if(it.imgEl) it.imgEl.src=src;
+    }
+    // 去背/擦除後套用新圖:先存入還原堆疊,再更新來源、關掉白框/陰影(避免矩形殘影)
+    function applyProcessed(it, dataUrl){
+      (it._undo=it._undo||[]).push({src:it.src,border:it.border,shadow:it.shadow});
+      if(it._undo.length>12) it._undo.shift();
+      setPhotoSrc(it, dataUrl);
+      it.border=false; it.shadow=false;
+      applyPhoto(it); if(selected===it) syncFilterUI(); scheduleSave();
+      updateRevertBtn();
+    }
+    // 返回上一步(復原去背/擦除)
+    function revertPhoto(it){
+      if(!it._undo||!it._undo.length){ toast('沒有可返回的步驟'); return; }
+      const s=it._undo.pop();
+      setPhotoSrc(it, s.src); it.border=s.border; it.shadow=s.shadow;
+      applyPhoto(it); if(selected===it) syncFilterUI(); scheduleSave();
+      updateRevertBtn(); toast('已返回上一步');
+    }
+    function updateRevertBtn(){
+      const b=qs('#bgRevert'); if(!b) return;
+      const n=(selected&&selected.type==='photo'&&selected._undo)?selected._undo.length:0;
+      b.disabled=!n; b.textContent=n?('返回上一步('+n+')'):'返回上一步';
+    }
+
+    // 把選取照片畫到離線 canvas(回傳 canvas 與像素;跨來源受保護會丟例外)
+    function photoToCanvas(it){
+      const img=it.img;
+      if(!img||!img.complete||!img.naturalWidth) return null;
+      const cv=document.createElement('canvas'); cv.width=img.naturalWidth; cv.height=img.naturalHeight;
+      cv.getContext('2d').drawImage(img,0,0);
+      return cv;
+    }
+
+    // 快速去背:從四邊 flood fill 移除與背景相近的顏色(適合單色背景)
+    function removeBgSolid(it){
+      const cv=photoToCanvas(it); if(!cv){ toast('圖片尚未載入'); return; }
+      const cx=cv.getContext('2d'); const w=cv.width, h=cv.height;
+      let data; try{ data=cx.getImageData(0,0,w,h); }catch(e){ toast('此圖受跨來源保護,無法去背'); return; }
+      const px=data.data;
+      const corners=[[0,0],[w-1,0],[0,h-1],[w-1,h-1]];
+      let br=0,bg=0,bb=0; corners.forEach(([x,y])=>{ const i=(y*w+x)*4; br+=px[i]; bg+=px[i+1]; bb+=px[i+2]; }); br/=4; bg/=4; bb/=4;
+      const tol2=42*42*3;                       // 顏色容差
+      const visited=new Uint8Array(w*h), stack=[];
+      function tryPx(x,y){ if(x<0||y<0||x>=w||y>=h) return; const p=y*w+x; if(visited[p]) return; visited[p]=1;
+        const i=p*4; const dr=px[i]-br,dg=px[i+1]-bg,db=px[i+2]-bb;
+        if(dr*dr+dg*dg+db*db<=tol2){ px[i+3]=0; stack.push(p); } }
+      for(let x=0;x<w;x++){ tryPx(x,0); tryPx(x,h-1); }
+      for(let y=0;y<h;y++){ tryPx(0,y); tryPx(w-1,y); }
+      while(stack.length){ const p=stack.pop(); const x=p%w, y=(p/w)|0; tryPx(x+1,y); tryPx(x-1,y); tryPx(x,y+1); tryPx(x,y-1); }
+      cx.putImageData(data,0,0);
+      applyProcessed(it, cv.toDataURL('image/png'));
+      toast('去背完成');
+    }
+
+    // AI 去背:瀏覽器端模型(首次下載約 40MB,需連網)
+    let imglyMod=null;
+    async function removeBgAI(it){
+      const cv=photoToCanvas(it); if(!cv){ toast('圖片尚未載入'); return; }
+      let blob; try{ blob=await new Promise((res,rej)=>cv.toBlob(b=>b?res(b):rej(),'image/png')); }
+      catch(e){ toast('此圖受跨來源保護,無法去背'); return; }
+      const btn=qs('#bgAI'), hint=qs('#bgHint'); const oldTxt=btn.textContent;
+      btn.disabled=true; btn.textContent='處理中…'; hint.textContent='AI 去背處理中,首次需下載模型,請稍候…';
+      try{
+        if(!imglyMod) imglyMod=await import('https://esm.sh/@imgly/background-removal@1.7.0');
+        const removeBackground=imglyMod.removeBackground||imglyMod.default;
+        const outBlob=await removeBackground(blob);
+        applyProcessed(it, await blobToDataURL(outBlob));
+        toast('AI 去背完成');
+      }catch(e){ toast('AI 去背失敗(需連網)'); }
+      btn.disabled=false; btn.textContent=oldTxt; hint.textContent='快速去背適合單色背景;複雜背景用 AI 去背(首次需下載模型)。';
+    }
+
+    qs('#bgQuick').onclick=()=>{ if(selected&&selected.type==='photo') removeBgSolid(selected); else toast('請先選取一張照片'); };
+    qs('#bgAI').onclick   =()=>{ if(selected&&selected.type==='photo') removeBgAI(selected);   else toast('請先選取一張照片'); };
+
+    // ── 手動擦除 / 修補 ────────────────────────────────────────────
+    const eraser = (function(){
+      const modal=qs('#eraserModal'), canvas=qs('#eraserCanvas'), cx=canvas.getContext('2d');
+      const sizeInput=qs('#eraserSize');
+      let target=null, baseImg=null, mode='erase', drawing=false, brush=40, last=null;
+      const scale=()=>{ const r=canvas.getBoundingClientRect(); return r.width? canvas.width/r.width : 1; };
+      const setMode=m=>{ mode=m; qs('#eraserErase').classList.toggle('active',m==='erase'); qs('#eraserRestore').classList.toggle('active',m==='restore'); };
+      function open(it){
+        const img=it.img; if(!img||!img.complete||!img.naturalWidth){ toast('圖片尚未載入'); return; }
+        canvas.width=img.naturalWidth; canvas.height=img.naturalHeight;
+        cx.clearRect(0,0,canvas.width,canvas.height); cx.drawImage(img,0,0);
+        try{ cx.getImageData(0,0,1,1); }catch(e){ toast('此圖受跨來源保護,無法編輯'); return; }
+        target=it; baseImg=img; brush=+sizeInput.value; setMode('erase');
+        modal.classList.remove('hidden');
+      }
+      function close(){ modal.classList.add('hidden'); target=null; baseImg=null; drawing=false; last=null; cursor.style.display='none'; }
+      // 圓圈筆刷游標
+      const cursor=document.createElement('div'); cursor.className='eraser-cursor'; document.body.appendChild(cursor);
+      function moveCursor(e){ cursor.style.display='block'; cursor.style.width=cursor.style.height=brush+'px'; cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; }
+      function pt(e){ const r=canvas.getBoundingClientRect(); return { x:(e.clientX-r.left)/r.width*canvas.width, y:(e.clientY-r.top)/r.height*canvas.height }; }
+      function stamp(x,y){
+        const rad=brush/2*scale();
+        cx.save(); cx.beginPath(); cx.arc(x,y,rad,0,Math.PI*2);
+        if(mode==='erase'){ cx.globalCompositeOperation='destination-out'; cx.fill(); }
+        else { cx.clip(); cx.drawImage(baseImg,0,0); }   // 還原:在筆刷範圍內重畫原圖
+        cx.restore();
+      }
+      function line(a,b){ const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy); const step=Math.max(1,brush*scale()/4); const n=Math.ceil(d/step); for(let i=0;i<=n;i++) stamp(a.x+dx*i/n,a.y+dy*i/n); }
+      canvas.addEventListener('pointerdown',e=>{ if(!target)return; e.preventDefault(); drawing=true; canvas.setPointerCapture(e.pointerId); last=pt(e); stamp(last.x,last.y); moveCursor(e); });
+      canvas.addEventListener('pointermove',e=>{ moveCursor(e); if(!drawing)return; const p=pt(e); line(last,p); last=p; });
+      canvas.addEventListener('pointerup',()=>{ drawing=false; last=null; });
+      canvas.addEventListener('pointercancel',()=>{ drawing=false; last=null; });
+      canvas.addEventListener('pointerleave',()=>{ cursor.style.display='none'; });
+      sizeInput.oninput=()=>{ brush=+sizeInput.value; cursor.style.width=cursor.style.height=brush+'px'; };
+      qs('#eraserErase').onclick=()=>setMode('erase');
+      qs('#eraserRestore').onclick=()=>setMode('restore');
+      qs('#eraserReset').onclick=()=>{ if(!baseImg)return; cx.clearRect(0,0,canvas.width,canvas.height); cx.drawImage(baseImg,0,0); };
+      qs('#eraserCancel').onclick=close;
+      qs('#eraserDone').onclick=()=>{ if(target){ applyProcessed(target, canvas.toDataURL('image/png')); toast('已套用擦除結果'); } close(); };
+      return { open, close, isOpen:()=>!modal.classList.contains('hidden') };
+    })();
+    qs('#bgErase').onclick=()=>{ if(selected&&selected.type==='photo') eraser.open(selected); else toast('請先選取一張照片'); };
+    qs('#bgRevert').onclick=()=>{ if(selected&&selected.type==='photo') revertPhoto(selected); else toast('請先選取一張照片'); };
+
+    // ── 動態介面導覽 ───────────────────────────────────────────────
+    (function(){
+      const TOUR=[
+        {sel:'#addBtn',    title:'加入照片',   text:'從電腦選圖加入畫布。可按住 Ctrl / Shift 一次多選,多張會自動階梯錯開排列。也可直接把圖片拖曳進畫布。'},
+        {sel:'#emojis',    title:'貼圖',       text:'內建 emoji 貼圖,點一下即加入。最後的虛線「＋」可上傳你自己的透明 PNG 當貼圖。'},
+        {sel:'#stickerQ',  title:'貼圖搜尋', text:'輸入關鍵字(如「貓」「愛心」「派對」)搜尋近 2000 個中文命名的 emoji;或用下方分類瀏覽。'},
+        {sel:'#iconQ',     title:'雲端圖示',   text:'搜尋數十萬開源向量圖示,建議用英文關鍵字(如 heart、star)較準。'},
+        {sel:'#iconColors',title:'圖示顏色',   text:'先選顏色(或用最後的色環自訂任何顏色),再點圖示,顏色會直接套上。'},
+        {sel:'#cloudQ',    title:'雲端圖庫',   text:'搜尋 Pixabay 高品質照片,結果每次隨機出現;點縮圖加入畫布,可再套濾鏡與去背。'},
+        {sel:'#layouts',   title:'自動排版',   text:'一鍵把畫布上的照片排成拼貼版型,還能調整間距。'},
+        {sel:'#ratioChips',title:'畫布比例',   text:'切換 1:1、3:4、16:9 等比例,配合不同社群平台需求。'},
+        {sel:'#swatches',  title:'背景顏色',   text:'選背景色,或用最後的色環自訂任何顏色。'},
+        {sel:'#exportBtn', title:'匯出 PNG',   text:'完成後匯出高解析 PNG。小提醒:選取一張照片後,左側會出現「濾鏡、去背、手動擦除」等工具。'}
+      ];
+      const overlay=qs('#tour'), spot=qs('#tourSpot'), card=qs('#tourCard');
+      let steps=[], i=0;
+      function start(){
+        steps=TOUR.filter(s=>{ const el=qs(s.sel); return el && el.offsetParent!==null; });
+        if(!steps.length){ toast('目前沒有可導覽的項目'); return; }
+        i=0; overlay.classList.remove('hidden'); render();
+        window.addEventListener('resize', render);
+      }
+      function end(){ overlay.classList.add('hidden'); window.removeEventListener('resize', render); try{ localStorage.setItem('tourSeen','1'); }catch(e){} }
+      function render(){
+        const step=steps[i], el=qs(step.sel);
+        if(!el){ if(i<steps.length-1){ i++; render(); } else end(); return; }
+        el.scrollIntoView({block:'center', inline:'nearest', behavior:'smooth'});
+        setTimeout(()=>place(el), 220);
+        qs('#tourStep').textContent='導覽 '+(i+1)+' / '+steps.length;
+        qs('#tourTitle').textContent=step.title;
+        qs('#tourText').textContent=step.text;
+        qs('#tourPrev').style.visibility=i>0?'visible':'hidden';
+        qs('#tourNext').textContent=i===steps.length-1?'完成':'下一步';
+      }
+      function place(el){
+        const r=el.getBoundingClientRect(), pad=6;
+        spot.style.left=(r.left-pad)+'px'; spot.style.top=(r.top-pad)+'px';
+        spot.style.width=(r.width+pad*2)+'px'; spot.style.height=(r.height+pad*2)+'px';
+        const cw=card.offsetWidth||272, ch=card.offsetHeight||170, gap=14, vw=innerWidth, vh=innerHeight;
+        let x=r.right+gap, y=r.top;
+        if(x+cw>vw-8) x=r.left-gap-cw;                       // 空間不夠 → 放左側
+        if(x<8){ x=Math.min(Math.max(8,r.left), vw-cw-8); y=r.bottom+gap; } // 仍不夠 → 放下方
+        x=Math.min(Math.max(8,x), vw-cw-8);
+        y=Math.min(Math.max(8,y), vh-ch-8);
+        card.style.left=x+'px'; card.style.top=y+'px';
+      }
+      qs('#tourNext').onclick=()=>{ if(i>=steps.length-1) end(); else { i++; render(); } };
+      qs('#tourPrev').onclick=()=>{ if(i>0){ i--; render(); } };
+      qs('#tourSkip').onclick=end;
+      overlay.addEventListener('click', e=>{ if(e.target===overlay || e.target===spot) end(); });
+      qs('#helpFab').onclick=start;
+      try{ if(!localStorage.getItem('tourSeen')) setTimeout(start, 700); }catch(e){}
+    })();
+
+    // ── Text UI ───────────────────────────────────────────────────
+    const fontWrap = qs('#fontChips');
+    FONTS.forEach(f=>{
+      const b=document.createElement('button'); b.className='fontchip'; b.textContent=f.name; b.style.fontFamily=f.css;
+      b.onclick=()=>{ if(selected&&selected.type==='text'){selected.font=f.css;applyText(selected);syncTextUI();scheduleSave();} };
+      fontWrap.appendChild(b);
+    });
+    const tcWrap = qs('#textColors');
+    TEXTCOLORS.forEach(c=>{
+      const d=document.createElement('div'); d.className='sw'; d.style.background=c; d.dataset.c=c;
+      d.onclick=()=>{ if(selected&&selected.type==='text'){selected.color=c;applyText(selected);syncTextUI();scheduleSave();} };
+      tcWrap.appendChild(d);
+    });
+    // 自訂顏色(系統色環/色盤)
+    const tcCustom=document.createElement('label'); tcCustom.className='sw-custom'; tcCustom.title='自訂顏色';
+    tcCustom.innerHTML='<span>+</span><input type="color" value="#2c2722">';
+    tcCustom.querySelector('input').addEventListener('input',e=>{ if(selected&&selected.type==='text'){ selected.color=e.target.value; applyText(selected); [...tcWrap.querySelectorAll('.sw')].forEach(s=>s.classList.remove('active')); scheduleSave(); } });
+    tcWrap.appendChild(tcCustom);
+    qs('#txtBold').onclick=()=>{ if(selected&&selected.type==='text'){selected.weight=selected.weight>=600?300:600;applyText(selected);scheduleSave();} };
+    qs('#txtEdit').onclick=()=>{ if(selected&&selected.type==='text')enterEdit(selected); };
+    function syncTextUI(){
+      if(!selected||selected.type!=='text')return;
+      [...fontWrap.children].forEach((c,i)=>c.classList.toggle('active',FONTS[i]&&FONTS[i].css===selected.font));
+      [...tcWrap.children].forEach(c=>c.classList.toggle('active',c.dataset.c===selected.color));
+    }
+
+    // ── Pages ─────────────────────────────────────────────────────
+    function renderPageBar(){
+      [...pagebar.querySelectorAll('.ptab,.padd')].forEach(n=>n.remove());
+      project.pages.forEach((p,i)=>{
+        const t=document.createElement('div'); t.className='ptab'+(i===project.active?' active':'');
+        t.innerHTML=(i+1)+(project.pages.length>1?'<span class="del">×</span>':'');
+        t.onclick=ev=>{ ev.target.classList.contains('del') ? delPage(i) : switchPage(i); };
+        pagebar.appendChild(t);
+      });
+      const add=document.createElement('button'); add.className='padd'; add.textContent='+'; add.title='新增頁面';
+      add.onclick=()=>{ project.pages.push(newPage()); switchPage(project.pages.length-1); scheduleSave(); };
+      pagebar.appendChild(add);
+    }
+
+    function clearStageDom(){ [...stage.querySelectorAll('.item')].forEach(n=>n.remove()); }
+    function switchPage(i){
+      select(null); clearStageDom(); project.active=i;
+      const p=pg(); stage.style.background=p.bg;
+      p.items.forEach(it=>buildEl(it)); syncRatioChips(); syncBgSwatch();
+      fitStage(); refresh(); renderPageBar(); scheduleSave();
+    }
+    function delPage(i){
+      if(project.pages.length<=1)return; if(!confirm('刪除第 '+(i+1)+' 頁？'))return;
+      project.pages.splice(i,1);
+      if(project.active>=project.pages.length)project.active=project.pages.length-1;
+      switchPage(project.active);
+    }
+    function syncRatioChips(){ document.querySelectorAll('#ratioChips .chip').forEach(c=>c.classList.toggle('active',Math.abs(parseFloat(c.dataset.r)-pg().ratio)<.01)); }
+    function syncBgSwatch(){ document.querySelectorAll('#swatches .sw').forEach(s=>s.classList.toggle('active',s.dataset.c===pg().bg)); }
+
+    qs('#clearBtn').onclick=()=>{
+      if(!pg().items.length)return; if(!confirm('清除本頁所有內容？'))return;
+      clearStageDom(); pg().items=[]; select(null); refresh(); scheduleSave();
+    };
+
+    // ── Keyboard ──────────────────────────────────────────────────
+    window.addEventListener('keydown', e=>{
+      if(eraser.isOpen()){ if(e.key==='Escape') eraser.close(); return; }  // 擦除視窗開啟時攔截,避免誤刪畫布
+      const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+      if(!selected)return; if(selected.el.classList.contains('editing'))return;
+      if(e.key==='Delete'||e.key==='Backspace'){ e.preventDefault(); removeItem(selected); return; }
+      const s=e.shiftKey?10:2;
+      if(e.key==='ArrowLeft') { selected.x-=s; render(selected); }
+      if(e.key==='ArrowRight'){ selected.x+=s; render(selected); }
+      if(e.key==='ArrowUp')   { selected.y-=s; render(selected); }
+      if(e.key==='ArrowDown') { selected.y+=s; render(selected); }
+    });
+
+    // ── Export PNG ────────────────────────────────────────────────
+    let exportW=2048;   // 匯出長邊像素(解析度設定)
+    function renderPageCanvas(p){
+      const cw=stage.clientWidth, ch=stage.clientHeight;
+      const scale=exportW/Math.max(cw,ch);   // 讓輸出長邊 = 設定解析度
+      const cv=document.createElement('canvas'); cv.width=Math.round(cw*scale); cv.height=Math.round(ch*scale);
+      const ctx=cv.getContext('2d'); ctx.scale(scale,scale);
+      ctx.fillStyle=p.bg; ctx.fillRect(0,0,cw,ch);
+      const ordered=[...p.items].sort((a,b)=>a.z-b.z);
+      ordered.forEach(it=>{
+        const cx=it.x+it.w/2, cy=it.y+it.h/2;
+        ctx.save(); ctx.translate(cx,cy); ctx.rotate(it.rot*Math.PI/180);
+        if(it.type==='photo'){
+          const pad=it.border?9:0, rr=it.round?13:1;
+          if(it.shadow){ ctx.shadowColor='rgba(0,0,0,.28)'; ctx.shadowBlur=22; ctx.shadowOffsetY=8; }
+          if(it.border){ roundRect(ctx,-it.w/2,-it.h/2,it.w,it.h,rr); ctx.fillStyle='#fff'; ctx.fill(); }
+          ctx.shadowColor='transparent';
+          const iw=it.w-pad*2, ih=it.h-pad*2;
+          ctx.save(); roundRect(ctx,-iw/2,-ih/2,iw,ih,Math.max(0,rr-(it.border?5:0))); ctx.clip();
+          ctx.filter=filterStr(it.filter); ctx.scale(it.flip,1);
+          if(it.img&&it.img.complete) ctx.drawImage(it.img,-iw/2,-ih/2,iw,ih);
+          ctx.restore();
+        } else if(it.type==='sticker'){
+          ctx.scale(it.flip,1);
+          if(it.src){
+            if(it.img&&it.img.complete) ctx.drawImage(it.img,-it.w/2,-it.h/2,it.w,it.h);
+          } else {
+            ctx.font=(Math.min(it.w,it.h)*.86)+'px system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif';
+            ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(it.glyph,0,2);
+          }
+        } else if(it.type==='text'){
+          ctx.font=it.weight+' '+it.fontSize+'px '+it.font;
+          ctx.fillStyle=it.color; ctx.textAlign='center'; ctx.textBaseline='middle';
+          const lines=it.text.split('\n'), lh=it.fontSize*1.3, total=(lines.length-1)*lh;
+          lines.forEach((ln,k)=>ctx.fillText(ln,0,-total/2+k*lh));
+        }
+        ctx.restore();
+      });
+      return cv;
+    }
+    function exportImage(fmt){
+      const p=pg(); if(!p.items.length){ toast('本頁沒有內容'); return; }
+      const cv=renderPageCanvas(p);
+      const mime = fmt==='jpg' ? 'image/jpeg' : 'image/png';
+      cv.toBlob(b=>{
+        if(!b){ toast('匯出失敗'); return; }
+        const a=document.createElement('a'); a.href=URL.createObjectURL(b);
+        a.download='collage-p'+(project.active+1)+'-'+Date.now()+'.'+fmt; a.click();
+        setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+        toast('已下載 '+fmt.toUpperCase());
+      }, mime, fmt==='jpg'?0.92:undefined);
+    }
+    qs('#exportBtn').onclick=()=>exportImage('png');
+    qs('#exportJpg').onclick=()=>exportImage('jpg');
+    // 解析度預設 + 自訂長邊
+    function updateResHint(){
+      const r=pg().ratio;                     // 寬/高
+      const w = r>=1 ? exportW : Math.round(exportW*r);
+      const h = r>=1 ? Math.round(exportW/r) : exportW;
+      qs('#resHint').textContent='輸出約 '+w+' × '+h+' px';
+    }
+    qs('#resChips').querySelectorAll('.chip').forEach(c=>{
+      c.onclick=()=>{ exportW=+c.dataset.w; [...c.parentNode.children].forEach(x=>x.classList.remove('active')); c.classList.add('active'); qs('#resCustom').value=''; updateResHint(); };
+    });
+    qs('#resCustom').addEventListener('input', e=>{
+      const v=parseInt(e.target.value,10);
+      if(!v) return;
+      exportW=Math.min(8000,Math.max(128,v));
+      qs('#resChips').querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+      updateResHint();
+    });
+    updateResHint();
+
+    function roundRect(ctx,x,y,w,h,r){
+      r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y);
+      ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+      ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+    }
+
+    // ── Persistence ───────────────────────────────────────────────
+    function stripItem(it){
+      const o={};
+      for(const k in it){ if(['el','imgEl','frameEl','txtEl','glyphEl','img','_undo'].includes(k))continue; o[k]=it[k]; }
+      return o;
+    }
+    function serialize(){
+      return { v:2, active:project.active, pages:project.pages.map(p=>({ratio:p.ratio,bg:p.bg,z:p.z,items:p.items.map(stripItem)})) };
+    }
+    function deserialize(data){
+      if(!data||!data.pages)return false;
+      project={ active:Math.min(data.active||0,data.pages.length-1),
+        pages:data.pages.map(p=>({ratio:p.ratio||1, bg:p.bg||'#ffffff', z:p.z||1,
+          items:(p.items||[]).map(it=>{ const c=Object.assign({},it); if(c.src){c.img=newImg(c.src);} return c; })})) };
+      return true;
+    }
+
+    qs('#saveProj').onclick=()=>{
+      const blob=new Blob([JSON.stringify(serialize())],{type:'application/json'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+      a.download='拼貼專案-'+Date.now()+'.json'; a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href),1000); toast('專案已儲存');
+    };
+    qs('#openProj').onclick=()=>projInput.click();
+    projInput.onchange=function(){
+      const f=this.files[0]; if(!f)return;
+      const rd=new FileReader();
+      rd.onload=e=>{ try{ const data=JSON.parse(e.target.result); if(deserialize(data)){ switchPage(project.active); toast('專案已載入'); } }catch(err){ toast('無法讀取檔案'); } };
+      rd.readAsText(f); this.value='';
+    };
+
+    function scheduleSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(autoSave,600); }
+    function autoSave(){ try{ localStorage.setItem('collage_studio_v2',JSON.stringify(serialize())); }catch(e){} }
+    function tryRestore(){
+      try{
+        const raw=localStorage.getItem('collage_studio_v2'); if(!raw)return false;
+        const data=JSON.parse(raw);
+        if(!data.pages||!data.pages.some(p=>p.items&&p.items.length))return false;
+        if(confirm('偵測到上次作品，要繼續編輯嗎？')){ if(deserialize(data))return true; }
+      }catch(e){}
+      return false;
+    }
+
+    // ── Toast ─────────────────────────────────────────────────────
+    let toastTimer=null;
+    function toast(msg){
+      let t=document.getElementById('cs-toast');
+      if(!t){ t=document.createElement('div'); t.id='cs-toast';
+        t.style.cssText='position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:rgba(26,24,20,.96);color:#f5f0e6;padding:9px 16px;border-radius:6px;font-size:12px;z-index:200000;box-shadow:0 6px 24px rgba(0,0,0,.4);transition:opacity .3s;letter-spacing:.06em;font-family:"Noto Sans TC",sans-serif';
+        document.body.appendChild(t);
+      }
+      t.textContent=msg; t.style.opacity='1'; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.style.opacity='0',1800);
+    }
+
+    // ── misc ──────────────────────────────────────────────────────
+    function refresh(){ emptyEl.style.display=pg().items.length?'none':'grid'; }
+
+    // ── Init ──────────────────────────────────────────────────────
+    this._resizeHandler = ()=>fitStage();
+    window.addEventListener('resize', this._resizeHandler);
+    tryRestore();
+    switchPage(project.active);
+    syncRatioChips(); syncBgSwatch(); fitStage(); refresh(); renderPageBar();
+
+    // ── Responsive panel ─────────────────────────────────────────
+    ;(function(){
+      const panelEl  = qs('.panel');
+      const backdrop = qs('#mobBackdrop');
+      const togBtn   = qs('#sidebarBtn');
+      const mobNavEl = qs('#mobNav');
+      let curSection = null;
+
+      const SECTION_LABELS = {
+        add:    ['加入','貼圖'],
+        layout: ['自動排版'],
+        style:  ['濾鏡','文字'],
+        bg:     ['畫布','背景'],
+        more:   ['專案','匯出']
+      };
+
+      function openPanel(section){
+        panelEl.classList.add('panel-open');
+        if(backdrop) backdrop.classList.add('show');
+        curSection = section;
+        if(mobNavEl) [...mobNavEl.querySelectorAll('.mob-nav-btn')].forEach(b => b.classList.toggle('active', b.dataset.section === section));
+        if(section){
+          const names = SECTION_LABELS[section] || [];
+          setTimeout(() => {
+            for(const lbl of panelEl.querySelectorAll('.lbl')){
+              if(names.some(n => lbl.textContent.trim().includes(n))){
+                const g = lbl.closest('.group');
+                if(g) panelEl.scrollTop = Math.max(0, g.offsetTop - 8);
+                break;
+              }
+            }
+          }, 80);
+        }
+      }
+      function closePanel(){
+        panelEl.classList.remove('panel-open');
+        if(backdrop) backdrop.classList.remove('show');
+        curSection = null;
+        if(mobNavEl) [...mobNavEl.querySelectorAll('.mob-nav-btn')].forEach(b => b.classList.remove('active'));
+      }
+
+      if(backdrop) backdrop.addEventListener('click', closePanel);
+      if(togBtn)   togBtn.addEventListener('click', () => panelEl.classList.contains('panel-open') ? closePanel() : openPanel(null));
+      if(mobNavEl) mobNavEl.addEventListener('click', e => {
+        const btn = e.target.closest('.mob-nav-btn');
+        if(!btn) return;
+        const sec = btn.dataset.section;
+        if(curSection === sec && panelEl.classList.contains('panel-open')) closePanel();
+        else openPanel(sec);
+      });
+
+      // Swipe panel down to close
+      let _ty = 0;
+      panelEl.addEventListener('touchstart', e => { _ty = e.touches[0].clientY; }, {passive:true});
+      panelEl.addEventListener('touchmove',  e => { if(e.touches[0].clientY - _ty > 68 && panelEl.scrollTop < 4) closePanel(); }, {passive:true});
+
+      // Auto-close on resize to desktop
+      window.addEventListener('resize', () => { if(window.innerWidth > 960) closePanel(); });
+    })();
+  }
+
+  componentWillUnmount(){
+    if(this._resizeHandler) window.removeEventListener('resize', this._resizeHandler);
+  }
+}
+</script>
+</body>
+</html>
