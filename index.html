@@ -1339,13 +1339,18 @@ class Component extends DCLogic {
       layWrap.appendChild(d);
     });
 
-    let gap=10;
-    qs('#gapRange').addEventListener('input', e=>{ gap=+e.target.value; qs('#gapVal').textContent=gap; });
+    let gap=10, curLayout=null;
+    qs('#gapRange').addEventListener('input', e=>{
+      gap=+e.target.value; qs('#gapVal').textContent=gap;
+      // 滑桿前進/後退時即時重排目前版型(散佈版型含隨機抖動且不吃間距,略過以免照片亂跳)
+      if(curLayout && !curLayout.scatter && pg().items.some(it=>it.type==='photo')) applyLayout(curLayout);
+    });
 
     // ── Layout algorithms ──────────────────────────────────────────
     function applyLayout(L, idx){
       const photos = pg().items.filter(it=>it.type==='photo');
       if(!photos.length){ toast('請先加入照片'); return; }
+      curLayout=L;
       const W=stage.clientWidth, H=stage.clientHeight, g=gap, n=photos.length;
       const cells=[];
 
