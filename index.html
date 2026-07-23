@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- maximum-scale=1 + user-scalable=no:禁止瀏覽器層級的頁面縮放(畫布縮放由程式自行處理) -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <script src="./support.js"></script>
 <script src="./emoji-data.js"></script>
 </head>
@@ -20,6 +21,8 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
+/* touch-action:manipulation 取消雙擊放大(頁面縮放一律禁止,畫布縮放由程式處理) */
+html,body{touch-action:manipulation}
 body{font-family:'Noto Sans TC','Zen Kaku Gothic New',system-ui,sans-serif;color:var(--ink);background:var(--ws);overflow:hidden;overscroll-behavior:none;-webkit-user-select:none;user-select:none}
 .stagearea,.stage,.stage-wrap{touch-action:none}
 .app{display:grid;grid-template-columns:1fr;height:100vh}
@@ -1086,6 +1089,10 @@ class Component extends DCLogic {
     const endPinch = e =>{ if(e.touches.length < 2) _pinching = false; };
     stagearea.addEventListener('touchend', endPinch);
     stagearea.addEventListener('touchcancel', endPinch);
+    // iOS Safari 會忽略 user-scalable=no,需攔截其專有 gesture 事件才能禁止頁面被捏合放大
+    // (不影響畫布的雙指縮放:那是用 touch 事件另行實作的)
+    ['gesturestart','gesturechange','gestureend'].forEach(t=>
+      document.addEventListener(t, e=>e.preventDefault(), {passive:false}));
     workspace.addEventListener('drop', e=>{
       e.preventDefault(); workspace.classList.remove('over');
       let files = e.dataTransfer.files;
