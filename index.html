@@ -213,21 +213,35 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
 .qbtn svg{width:16px;height:16px}
 .qsep{width:1px;background:rgba(255,255,255,.1);margin:6px 2px}
 
-/* ── Responsive ─────────────────────────────────────────────── */
-.mob-nav{display:block;position:fixed;left:16px;bottom:16px;width:230px;height:230px;background:transparent;z-index:600;pointer-events:none}
-  .mob-nav::before{content:'';position:absolute;left:0;bottom:0;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle at 0 100%,rgba(255,255,255,.06),transparent 60%);pointer-events:none}
-  .mob-nav-btn{position:absolute;width:58px;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:rgba(20,18,14,.95);border:1px solid rgba(255,255,255,.14);color:#d8cbbd;cursor:pointer;font-size:10px;letter-spacing:.05em;font-family:'Noto Sans TC',sans-serif;padding:4px;transition:transform .2s,color .15s,background .15s;backdrop-filter:blur(12px);border-radius:18px;pointer-events:auto}
-  .mob-nav-btn:hover{color:#fff;transform:none}
-  .mob-nav-btn svg{width:20px;height:20px;flex-shrink:0}
-  .mob-nav-btn.active,.mob-nav-btn:active{color:var(--accent);background:rgba(255,255,255,.08)}
-  .mob-nav-btn.mob-add{color:#e0c48d}
-  .mob-nav-btn.mob-add.active{color:#f6e2b2}
-  .mob-nav-btn:nth-child(1){left:0;bottom:0;}
-  .mob-nav-btn:nth-child(2){left:34px;bottom:18px;}
-  .mob-nav-btn:nth-child(3){left:68px;bottom:42px;}
-  .mob-nav-btn:nth-child(4){left:102px;bottom:76px;}
-  .mob-nav-btn:nth-child(5){left:138px;bottom:122px;}
-  .mob-nav-btn span{font-size:9px;white-space:nowrap;opacity:.88;line-height:1.2}
+/* ── Responsive:角落扇形選單 ─────────────────────────────── */
+/* 幾何:以左下角 (0,200) 為圓心。內圈 76px = 角落「加入」;外環 84–150px 分四等分楔塊(各 22.5°,留 1.2° 縫) */
+.mob-nav{display:block;position:fixed;left:env(safe-area-inset-left,0px);bottom:env(safe-area-inset-bottom,0px);width:200px;height:200px;z-index:600;pointer-events:none;font-family:'Noto Sans TC',sans-serif}
+.mob-toggle{position:absolute;left:0;bottom:0;width:76px;height:76px;border:none;margin:0;padding:12px 12px 0 0;clip-path:circle(76px at 0% 100%);background:rgba(20,18,14,.96);color:#d8cbbd;cursor:pointer;font-size:26px;line-height:1;display:grid;place-items:center;z-index:620;pointer-events:auto;transform-origin:0 100%;transition:transform .22s cubic-bezier(.34,1.3,.64,1),opacity .18s,background .15s;filter:drop-shadow(0 4px 12px rgba(0,0,0,.45))}
+.mob-toggle:hover{background:rgba(45,40,32,.97);color:#fff}
+.mob-nav.open .mob-toggle{opacity:0;transform:scale(.4);pointer-events:none}
+.mob-nav-btn{position:absolute;inset:0;width:100%;height:100%;border:none;margin:0;padding:0;background:rgba(20,18,14,.94);color:#d8cbbd;cursor:pointer;font-family:inherit;transform-origin:0 100%;opacity:0;transform:rotate(-40deg) scale(.5);pointer-events:none;transition:transform .28s cubic-bezier(.34,1.3,.64,1),opacity .2s,background .15s,color .15s;filter:drop-shadow(0 3px 8px rgba(0,0,0,.4))}
+.mob-nav.open .mob-nav-btn{opacity:1;transform:none;pointer-events:auto}
+.mob-nav-btn:hover{color:#fff;background:rgba(45,40,32,.96)}
+.mob-nav-btn.active,.mob-nav-btn:active{background:rgba(124,107,82,.92);color:#fff}
+.mob-nav-btn svg{width:15px;height:15px;flex-shrink:0}
+.mob-nav-btn .fan-lab{position:absolute;display:flex;flex-direction:column;align-items:center;gap:3px;transform:translate(-50%,-50%);font-size:10px;letter-spacing:.08em;white-space:nowrap;line-height:1;pointer-events:none}
+/* 外環三楔塊(由上而下:排版 / 樣式 / 背景,各 30°),依序展開 */
+.mob-nav-btn[data-section=layout]{clip-path:path('M 1.6 50 A 150 150 0 0 1 73.6 69.3 L 41.2 126.8 A 84 84 0 0 0 0.9 116 Z')}
+.mob-nav-btn[data-section=layout] .fan-lab{left:30px;top:87px}
+.mob-nav-btn[data-section=style]{clip-path:path('M 76.4 70.9 A 150 150 0 0 1 129.1 123.6 L 72.3 157.2 A 84 84 0 0 0 42.8 127.7 Z')}
+.mob-nav-btn[data-section=style] .fan-lab{left:83px;top:117px}
+.mob-nav-btn[data-section=bg]{clip-path:path('M 130.7 126.4 A 150 150 0 0 1 150 198.4 L 84 199.1 A 84 84 0 0 0 73.2 158.8 Z')}
+.mob-nav-btn[data-section=bg] .fan-lab{left:113px;top:170px}
+.mob-nav.open .mob-nav-btn[data-section=layout]{transition-delay:.05s}
+.mob-nav.open .mob-nav-btn[data-section=style]{transition-delay:.1s}
+.mob-nav.open .mob-nav-btn[data-section=bg]{transition-delay:.15s}
+/* 角落四分之一圓:加入 */
+.mob-nav-btn.mob-add{inset:auto;left:0;bottom:0;width:76px;height:76px;clip-path:circle(76px at 0% 100%);background:linear-gradient(135deg,#87735a,#5f5140);color:#f6ecd9;z-index:615;transform:scale(.4)}
+.mob-nav.open .mob-nav-btn.mob-add{transform:none}
+.mob-nav-btn.mob-add:hover{background:linear-gradient(135deg,#93805f,#6a5a42)}
+.mob-nav-btn.mob-add.active{background:linear-gradient(135deg,#9b8468,#6a5a42);color:#fff}
+.mob-nav-btn.mob-add .fan-lab{left:30px;top:auto;bottom:12px;transform:translate(-50%,0);font-size:11px;letter-spacing:.12em}
+.mob-nav-btn.mob-add svg{width:17px;height:17px}
 .mob-backdrop{display:none;position:fixed;inset:0;z-index:499;background:rgba(0,0,0,.4);backdrop-filter:blur(2px)}
 .mob-backdrop.show{display:block}
 
@@ -246,29 +260,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
 @media(max-width:600px){
   html,body{height:100%;overflow:hidden}
   .app{position:relative;grid-template-columns:1fr;grid-template-rows:1fr auto;height:100dvh}
-  .panel{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(110%);width:min(calc(100% - 32px),560px);max-height:68vh;overflow-y:auto;overflow-x:hidden;flex-direction:column;border-right:none;border-top:1px solid var(--pl);border-radius:24px;z-index:500;transition:transform .3s cubic-bezier(.32,0,.67,0);box-shadow:0 22px 48px rgba(0,0,0,.28)}
+  .panel{position:fixed;left:50%;top:auto;bottom:92px;transform:translateX(-50%) translateY(calc(100% + 130px));width:min(calc(100% - 32px),560px);max-height:68vh;overflow-y:auto;overflow-x:hidden;flex-direction:column;border-right:none;border-top:1px solid var(--pl);border-radius:24px;z-index:500;transition:transform .3s cubic-bezier(.32,0,.67,0);box-shadow:0 22px 48px rgba(0,0,0,.28)}
   .panel::before{content:'';display:block;width:40px;height:4px;background:#c5bdb3;border-radius:2px;margin:10px auto 0;flex-shrink:0}
   .panel.panel-open{transform:translateX(-50%) translateY(0);transition-timing-function:cubic-bezier(.33,1,.68,1)}
-  .mob-nav{display:block;position:fixed;left:16px;bottom:16px;width:72px;height:72px;background:transparent;z-index:600;pointer-events:auto}
-  .mob-nav::before{content:'';position:absolute;left:0;bottom:0;width:72px;height:72px;border-radius:50%;background:radial-gradient(circle at 0 100%,rgba(255,255,255,.08),transparent 60%);pointer-events:none;transition:width .2s,height .2s}
-  .mob-nav.open{width:230px;height:230px}
-  .mob-nav.open::before{width:230px;height:230px}
-  .mob-toggle{position:absolute;left:0;bottom:0;width:58px;height:58px;display:grid;place-items:center;background:rgba(20,18,14,.95);border:1px solid rgba(255,255,255,.14);color:#d8cbbd;border-radius:18px;cursor:pointer;font-size:22px;line-height:1;transition:background .15s,transform .2s;z-index:610}
-  .mob-toggle:hover{background:rgba(255,255,255,.12);color:#fff}
-  .mob-nav.open .mob-toggle{transform:rotate(45deg)}
-  .mob-nav-btn{position:absolute;width:58px;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:rgba(20,18,14,.95);border:1px solid rgba(255,255,255,.14);color:#d8cbbd;cursor:pointer;font-size:10px;letter-spacing:.05em;font-family:'Noto Sans TC',sans-serif;padding:4px;transition:transform .2s,color .15s,background .15s,opacity .2s;backdrop-filter:blur(12px);border-radius:18px;opacity:0;visibility:hidden;pointer-events:none}
-  .mob-nav.open .mob-nav-btn{opacity:1;visibility:visible;pointer-events:auto}
-  .mob-nav-btn:hover{color:#fff;transform:none}
-  .mob-nav-btn svg{width:20px;height:20px;flex-shrink:0}
-  .mob-nav-btn.active,.mob-nav-btn:active{color:var(--accent);background:rgba(255,255,255,.08)}
-  .mob-nav-btn.mob-add{color:#e0c48d}
-  .mob-nav-btn.mob-add.active{color:#f6e2b2}
-  .mob-nav-btn:nth-child(1){left:0;bottom:0;}
-  .mob-nav-btn:nth-child(2){left:34px;bottom:18px;}
-  .mob-nav-btn:nth-child(3){left:68px;bottom:42px;}
-  .mob-nav-btn:nth-child(4){left:102px;bottom:76px;}
-  .mob-nav-btn:nth-child(5){left:138px;bottom:122px;}
-  .mob-nav-btn span{font-size:9px;white-space:nowrap;opacity:.9;line-height:1.1}
+  /* 扇形選單沿用基礎樣式(貼齊左下角) */
   .pagebar{padding:4px 10px;border-top:none;border-bottom:1px solid rgba(255,255,255,.05)}
   .ptab{min-width:28px;height:24px;font-size:10px;padding:0 8px}
   .padd{width:26px;height:26px;font-size:14px}
@@ -487,26 +482,30 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
 
 <div class="mob-backdrop" id="mobBackdrop"></div>
 <nav class="mob-nav" id="mobNav">
-  <button class="mob-toggle" type="button" aria-label="切換選單">+</button>
-  <button class="mob-nav-btn mob-add" data-section="add">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8M8 12h8"></path></svg>
-    加入
+  <button class="mob-toggle" type="button" aria-label="展開選單">＋</button>
+  <button class="mob-nav-btn mob-add" data-section="add" type="button">
+    <span class="fan-lab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8M8 12h8"></path></svg>
+      加入
+    </span>
   </button>
-  <button class="mob-nav-btn" data-section="layout">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
-    排版
+  <button class="mob-nav-btn" data-section="layout" type="button">
+    <span class="fan-lab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+      排版
+    </span>
   </button>
-  <button class="mob-nav-btn" data-section="style">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-    樣式
+  <button class="mob-nav-btn" data-section="style" type="button">
+    <span class="fan-lab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+      樣式
+    </span>
   </button>
-  <button class="mob-nav-btn" data-section="bg">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-    背景
-  </button>
-  <button class="mob-nav-btn" data-section="more">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></svg>
-    更多
+  <button class="mob-nav-btn" data-section="bg" type="button">
+    <span class="fan-lab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+      背景
+    </span>
   </button>
 </nav>
 
@@ -903,6 +902,7 @@ class Component extends DCLogic {
       selectionBox.style.width = '0px';
       selectionBox.style.height = '0px';
       const onMove = ev => {
+        if(_pinching) return;   // 雙指縮放中不更新框選
         const p = pt(ev);
         const x = Math.min(p.x, marqueeStart.x);
         const y = Math.min(p.y, marqueeStart.y);
@@ -938,20 +938,21 @@ class Component extends DCLogic {
 
     // ── Gesture engine ────────────────────────────────────────────
     function pt(e){ const r=stage.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
-    let _dragging = false, _capEl=null, _capId=null;
+    let _dragging = false, _capEl=null, _capId=null, _pinching = false;
 
     function endGesture(move, it, pid){
       _dragging = true;
       if(it && pid!=null){ try{ it.el.setPointerCapture(pid); _capEl=it.el; _capId=pid; }catch(_){} }
+      const mv=ev=>{ if(_pinching) return; move(ev); };   // 雙指縮放中暫停單指手勢,避免物件跟著位移
       const up=()=>{
         _dragging=false;
         if(_capEl && _capId!=null){ try{ _capEl.releasePointerCapture(_capId); }catch(_){} _capEl=null; _capId=null; }
-        window.removeEventListener('pointermove',move);
+        window.removeEventListener('pointermove',mv);
         window.removeEventListener('pointerup',up);
         window.removeEventListener('pointercancel',up);
         scheduleSave();
       };
-      window.addEventListener('pointermove',move);
+      window.addEventListener('pointermove',mv);
       window.addEventListener('pointerup',up);
       window.addEventListener('pointercancel',up);
     }
@@ -1060,6 +1061,28 @@ class Component extends DCLogic {
     stagearea.addEventListener('wheel', e =>{
       e.preventDefault(); updateStageScale(stageScale - Math.sign(e.deltaY) * 0.08);
     }, {passive:false});
+    // 雙指捏合縮放畫布(手指落在照片上也可以,縮放期間單指手勢會暫停)
+    let pinchD0 = 0, pinchS0 = 1;
+    const pinchDist = e => Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    stagearea.addEventListener('touchstart', e =>{
+      if(e.touches.length === 2){
+        _pinching = true;
+        pinchD0 = pinchDist(e);
+        pinchS0 = stageScale;
+      }
+    }, {passive:true});
+    stagearea.addEventListener('touchmove', e =>{
+      if(_pinching && e.touches.length === 2){
+        e.preventDefault();
+        if(pinchD0 > 0) updateStageScale(pinchS0 * pinchDist(e) / pinchD0);
+      }
+    }, {passive:false});
+    const endPinch = e =>{ if(e.touches.length < 2) _pinching = false; };
+    stagearea.addEventListener('touchend', endPinch);
+    stagearea.addEventListener('touchcancel', endPinch);
     workspace.addEventListener('drop', e=>{
       e.preventDefault(); workspace.classList.remove('over');
       let files = e.dataTransfer.files;
@@ -1883,15 +1906,17 @@ class Component extends DCLogic {
         add:    ['加入','貼圖'],
         layout: ['自動排版'],
         style:  ['濾鏡','文字'],
-        bg:     ['畫布','背景'],
-        more:   ['專案','匯出']
+        bg:     ['畫布','背景']
       };
 
       function openPanel(section){
         panelEl.classList.add('panel-open');
         if(backdrop) backdrop.classList.add('show');
         curSection = section;
-        if(mobNavEl) [...mobNavEl.querySelectorAll('.mob-nav-btn')].forEach(b => b.classList.toggle('active', b.dataset.section === section));
+        if(mobNavEl){
+          mobNavEl.classList.remove('open');
+          [...mobNavEl.querySelectorAll('.mob-nav-btn')].forEach(b => b.classList.toggle('active', b.dataset.section === section));
+        }
         if(section){
           const names = SECTION_LABELS[section] || [];
           setTimeout(() => {
@@ -1909,7 +1934,10 @@ class Component extends DCLogic {
         panelEl.classList.remove('panel-open');
         if(backdrop) backdrop.classList.remove('show');
         curSection = null;
-        if(mobNavEl) [...mobNavEl.querySelectorAll('.mob-nav-btn')].forEach(b => b.classList.remove('active'));
+        if(mobNavEl){
+          mobNavEl.classList.remove('open');
+          [...mobNavEl.querySelectorAll('.mob-nav-btn')].forEach(b => b.classList.remove('active'));
+        }
       }
 
       if(backdrop) backdrop.addEventListener('click', closePanel);
@@ -1929,6 +1957,10 @@ class Component extends DCLogic {
             return;
           }
         });
+        // 點扇形選單以外的地方 → 收合
+        document.addEventListener('pointerdown', e => {
+          if(mobNavEl.classList.contains('open') && !e.target.closest('#mobNav')) mobNavEl.classList.remove('open');
+        }, true);
       }
 
       // Swipe panel down to close
