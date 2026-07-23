@@ -345,16 +345,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
       <div class="layouts" id="layouts"></div>
       <div class="slider" style="margin-top:10px;margin-bottom:0">
         <label>間距 <b><span id="gapVal">10</span>px</b></label>
-        <input type="range" id="gapRange" min="0" max="40" value="10">
+        <!-- range 不能帶 value 屬性:React 會視為受控元件,在每次 input 後把數值強制還原(初始值由 JS 設定) -->
+        <input type="range" id="gapRange" min="0" max="40">
       </div>
     </div>
 
     <div class="group hidden" id="filterGroup">
       <div class="lbl">濾鏡與調整</div>
       <div class="chips" id="presetChips" style="margin-bottom:12px"></div>
-      <div class="slider"><label>亮度 <b id="brightVal">100%</b></label><input type="range" id="brightRange" min="40" max="160" value="100"></div>
-      <div class="slider"><label>對比 <b id="contrastVal">100%</b></label><input type="range" id="contrastRange" min="40" max="180" value="100"></div>
-      <div class="slider"><label>飽和 <b id="satVal">100%</b></label><input type="range" id="satRange" min="0" max="200" value="100"></div>
+      <div class="slider"><label>亮度 <b id="brightVal">100%</b></label><input type="range" id="brightRange" min="40" max="160"></div>
+      <div class="slider"><label>對比 <b id="contrastVal">100%</b></label><input type="range" id="contrastRange" min="40" max="180"></div>
+      <div class="slider"><label>飽和 <b id="satVal">100%</b></label><input type="range" id="satRange" min="0" max="200"></div>
       <div class="chips" style="margin-top:3px">
         <button class="chip" id="styleShadow">陰影</button>
         <button class="chip" id="styleRound">圓角</button>
@@ -514,7 +515,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
     <span class="eraser-title">手動擦除 / 修補</span>
     <button class="chip active" id="eraserErase">擦除</button>
     <button class="chip" id="eraserRestore">還原</button>
-    <label class="eraser-size">筆刷 <input type="range" id="eraserSize" min="6" max="140" value="40"></label>
+    <label class="eraser-size">筆刷 <input type="range" id="eraserSize" min="6" max="140"></label>
     <span class="eraser-spacer"></span>
     <button class="btn sm" id="eraserReset">重置</button>
     <button class="btn sm" id="eraserCancel">取消</button>
@@ -1340,6 +1341,10 @@ class Component extends DCLogic {
     });
 
     let gap=10, curLayout=null;
+    // range 初始值(HTML 不帶 value 屬性,避免被 React 當成受控元件而在拖曳後彈回)
+    qs('#gapRange').value=gap;
+    qs('#brightRange').value=100; qs('#contrastRange').value=100; qs('#satRange').value=100;
+    qs('#eraserSize').value=40;
     qs('#gapRange').addEventListener('input', e=>{
       gap=+e.target.value; qs('#gapVal').textContent=gap;
       // 滑桿前進/後退時即時重排目前版型(散佈版型含隨機抖動且不吃間距,略過以免照片亂跳)
