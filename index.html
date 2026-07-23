@@ -1784,12 +1784,24 @@ class Component extends DCLogic {
           const iw=it.w-pad*2, ih=it.h-pad*2;
           ctx.save(); roundRect(ctx,-iw/2,-ih/2,iw,ih,Math.max(0,rr-(it.border?5:0))); ctx.clip();
           ctx.filter=filterStr(it.filter); ctx.scale(it.flip,1);
-          if(it.img&&it.img.complete) ctx.drawImage(it.img,-iw/2,-ih/2,iw,ih);
+          if(it.img&&it.img.complete){
+            // 與畫面的 object-fit:cover 一致:置中裁切、不拉伸變形
+            const sw=it.img.naturalWidth||iw, sh=it.img.naturalHeight||ih;
+            const k=Math.max(iw/sw, ih/sh);
+            const cw2=iw/k, ch2=ih/k;
+            ctx.drawImage(it.img,(sw-cw2)/2,(sh-ch2)/2,cw2,ch2,-iw/2,-ih/2,iw,ih);
+          }
           ctx.restore();
         } else if(it.type==='sticker'){
           ctx.scale(it.flip,1);
           if(it.src){
-            if(it.img&&it.img.complete) ctx.drawImage(it.img,-it.w/2,-it.h/2,it.w,it.h);
+            if(it.img&&it.img.complete){
+              // 與畫面的 object-fit:contain 一致:等比縮放置中、不拉伸變形
+              const sw=it.img.naturalWidth||it.w, sh=it.img.naturalHeight||it.h;
+              const k=Math.min(it.w/sw, it.h/sh);
+              const dw=sw*k, dh=sh*k;
+              ctx.drawImage(it.img,-dw/2,-dh/2,dw,dh);
+            }
           } else {
             ctx.font=(Math.min(it.w,it.h)*.86)+'px system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif';
             ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(it.glyph,0,2);
