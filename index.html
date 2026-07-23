@@ -37,6 +37,7 @@ input[type=file]{display:none !important}   /* 檔案輸入一律隱藏,改由�
 
 /* Buttons */
 .btn{display:flex;align-items:center;gap:8px;width:100%;border:1px solid var(--pl);background:#fff;color:var(--ink);font-family:inherit;font-size:12.5px;font-weight:400;padding:9px 11px;border-radius:6px;cursor:pointer;letter-spacing:.04em;transition:border-color .15s,background .12s}
+.btn.active{background:rgba(236,228,214,.12);color:var(--ink);border-color:rgba(236,228,214,.35)}
 .btn:hover{border-color:var(--accent);background:#faf6ef}
 .btn svg{width:14px;height:14px;flex:none;color:var(--soft)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -72,8 +73,8 @@ input[type=file]{display:none !important}   /* 檔案輸入一律隱藏,改由�
 .slider{margin-bottom:9px}
 .slider label{display:flex;justify-content:space-between;font-size:11px;color:var(--soft);margin-bottom:5px;letter-spacing:.03em}
 .slider label b{color:var(--ink);font-weight:500}
-input[type=range]{width:100%;-webkit-appearance:none;height:3px;border-radius:2px;background:#ddd7ca;outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;background:#ddd7ca;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 
 /* Emojis */
 .sticker-cats{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
@@ -155,6 +156,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 .workspace::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.028) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;z-index:0}
 .stagearea{flex:1;display:grid;place-items:center;position:relative;min-height:0;z-index:1}
 .stage-wrap{position:relative}
+.stage-wrap.phone-preview{display:flex;justify-content:center;align-items:center;padding:18px 0 24px;background:linear-gradient(180deg,#191815,#0f0e0c);border-radius:44px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 18px 40px rgba(0,0,0,.24);}
+.stage-wrap.phone-preview .stage{border-radius:34px;box-shadow:0 20px 42px rgba(0,0,0,.35)}
 .stage{position:relative;overflow:hidden;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.45),0 32px 80px rgba(0,0,0,.35),0 0 0 .5px rgba(255,255,255,.06);border-radius:2px}
 
 /* ── Items ─────────────────────────────────────────────────── */
@@ -220,16 +223,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 /* Mobile ≤600px: bottom sheet + nav bar */
 @media(max-width:600px){
   html,body{height:100%;overflow:hidden}
-  .app{grid-template-columns:1fr;grid-template-rows:1fr auto;height:calc(100dvh - 56px)}
-  .panel{position:fixed;left:0;right:0;bottom:56px;max-height:72vh;overflow-y:auto;overflow-x:hidden;flex-direction:column;border-right:none;border-top:1px solid var(--pl);border-radius:18px 18px 0 0;z-index:500;transform:translateY(101%);transition:transform .3s cubic-bezier(.32,0,.67,0);box-shadow:0 -8px 40px rgba(0,0,0,.5)}
-  .panel::before{content:'';display:block;width:36px;height:4px;background:#c5bdb3;border-radius:2px;margin:10px auto 0;flex-shrink:0}
-  .panel.panel-open{transform:translateY(0);transition-timing-function:cubic-bezier(.33,1,.68,1)}
-  .mob-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:56px;background:rgba(14,12,10,.97);border-top:1px solid rgba(255,255,255,.07);z-index:600;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
-  .mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:#706760;cursor:pointer;font-size:9px;letter-spacing:.05em;font-family:'Noto Sans TC',sans-serif;padding:6px 2px;transition:color .15s;-webkit-tap-highlight-color:transparent}
+  .app{position:relative;grid-template-columns:1fr;grid-template-rows:1fr auto;height:100dvh}
+  .panel{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(110%);width:min(calc(100% - 32px),560px);max-height:68vh;overflow-y:auto;overflow-x:hidden;flex-direction:column;border-right:none;border-top:1px solid var(--pl);border-radius:24px;z-index:500;transition:transform .3s cubic-bezier(.32,0,.67,0);box-shadow:0 22px 48px rgba(0,0,0,.28)}
+  .panel::before{content:'';display:block;width:40px;height:4px;background:#c5bdb3;border-radius:2px;margin:10px auto 0;flex-shrink:0}
+  .panel.panel-open{transform:translateX(-50%) translateY(0);transition-timing-function:cubic-bezier(.33,1,.68,1)}
+  .mob-nav{display:flex;position:absolute;bottom:16px;left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),560px);height:60px;background:rgba(20,18,14,.95);border-radius:999px;box-shadow:0 18px 40px rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.08);z-index:600;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+  .mob-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:none;border:none;color:#d8cbbd;cursor:pointer;font-size:10px;letter-spacing:.05em;font-family:'Noto Sans TC',sans-serif;padding:8px 6px;transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent}
+  .mob-nav-btn:hover{color:#fff}
   .mob-nav-btn svg{width:20px;height:20px;flex-shrink:0}
-  .mob-nav-btn.active,.mob-nav-btn:active{color:var(--accent)}
-  .mob-nav-btn.mob-add{color:#c4a06a}
-  .mob-nav-btn.mob-add.active{color:#e0ba88}
+  .mob-nav-btn.active,.mob-nav-btn:active{color:var(--accent);background:rgba(255,255,255,.06);border-radius:16px}
+  .mob-nav-btn.mob-add{color:#e0c48d}
+  .mob-nav-btn.mob-add.active{color:#f6e2b2}
   .pagebar{padding:4px 10px;border-top:none;border-bottom:1px solid rgba(255,255,255,.05)}
   .ptab{min-width:28px;height:24px;font-size:10px;padding:0 8px}
   .padd{width:26px;height:26px;font-size:14px}
@@ -254,7 +258,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 
     <div class="group">
       <div class="lbl">加入</div>
-      <button class="btn primary" id="addBtn">
+      <button class="btn primary" id="addBtn" title="可一次選取多張照片">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
         加入照片
       </button>
@@ -262,13 +266,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <button class="btn sm" id="addTextBtn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7V5h16v2M9 5v14M7 19h4"></path></svg>文字
         </button>
+        <button class="btn sm" id="phonePreviewBtn" title="桌機預覽手機畫面">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="3"></rect><path d="M12 19h.01"></path></svg>手機預覽
+        </button>
         <button class="btn sm" id="dupBtn" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>複製
         </button>
       </div>
-      <input type="file" id="fileInput" accept="image/*" multiple hidden>
-      <input type="file" id="stickerInput" accept="image/*" multiple hidden>
-      <input type="file" id="projInput" accept=".json,application/json" hidden>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
+      <input type="file" id="stickerInput" accept="image/*" multiple style="display:none;">
+      <input type="file" id="projInput" accept=".json,application/json" style="display:none;">
     </div>
 
     <div class="group">
@@ -501,12 +508,20 @@ class Component extends DCLogic {
     const qs = s => document.querySelector(s);
     const stage     = qs('#ws_stage');
     const stagearea = qs('#ws_stagearea');
+    const stageWrap  = qs('#ws_stagewrap');
     const workspace = qs('#ws_workspace');
     const emptyEl   = qs('#ws_empty');
     const quickbar  = qs('#ws_quickbar');
     const pagebar   = qs('#ws_pagebar');
     const fileInput = qs('#fileInput');
     const projInput = qs('#projInput');
+    const phonePreviewBtn = qs('#phonePreviewBtn');
+    let phonePreviewMode = false;
+    if(fileInput){ fileInput.multiple = true; fileInput.accept = 'image/*'; }
+    const selectionBox = document.createElement('div');
+    selectionBox.className = 'selection-box';
+    stage.appendChild(selectionBox);
+    let marqueeStart = null;
 
     // 分類貼圖:每個項目為 [emoji, 關鍵字(中英,供搜尋用)]
     const STICKER_CATS = [
@@ -610,6 +625,7 @@ class Component extends DCLogic {
 
     let project = { pages:[newPage()], active:0 };
     let selected = null;
+    let selectedItems = [];
     let saveTimer = null;
     let activeLayoutIdx = -1;
 
@@ -620,13 +636,18 @@ class Component extends DCLogic {
     // ── Stage sizing ───────────────────────────────────────────────
     function fitStage(){
       const pad = 48;
-      const aW = stagearea.clientWidth - pad*2;
-      const aH = stagearea.clientHeight - pad*2;
+      let aW = stagearea.clientWidth - pad*2;
+      let aH = stagearea.clientHeight - pad*2;
       const r = pg().ratio;
+      if(phonePreviewMode){
+        aW = Math.min(aW, 390);
+        aH = Math.min(aH, 780);
+      }
       let w = aW, h = w/r;
       if(h > aH){ h = aH; w = h*r; }
       w = Math.max(160,w); h = Math.max(160,h);
       stage.style.width = w+'px'; stage.style.height = h+'px';
+      stageWrap.classList.toggle('phone-preview', phonePreviewMode);
     }
 
     // ── Item creation ──────────────────────────────────────────────
@@ -726,6 +747,7 @@ class Component extends DCLogic {
         if(role==='resize') startResize(e,it,e.target.dataset.corner);
         else if(role==='rotate') startRotate(e,it);
         else if(it.type==='text' && it.el.classList.contains('editing')) return;
+        else if(e.shiftKey){ e.preventDefault(); select(it, true); }
         else startDrag(e,it);
       });
       if(it.type==='text') el.addEventListener('dblclick', ()=>enterEdit(it));
@@ -762,12 +784,49 @@ class Component extends DCLogic {
     }
 
     // ── Selection ─────────────────────────────────────────────────
-    function select(it){
-      if(selected && selected.el) selected.el.classList.remove('selected');
+    function clearSelection(){
+      selectedItems.forEach(item=>item.el.classList.remove('selected'));
+      selectedItems=[];
+      selected=null;
+      quickbar.classList.remove('show');
+      qs('#dupBtn').disabled = true;
+      updateContextPanels();
+    }
+    function select(it, append=false){
+      if(!it){ clearSelection(); return; }
+      if(!append && selectedItems.includes(it) && selectedItems.length>1){
+        selectedItems.forEach(item=>item.el.classList.remove('selected'));
+        selectedItems = [it];
+        it.el.classList.add('selected');
+        selected = it;
+        quickbar.classList.add('show');
+        qs('#dupBtn').disabled = false;
+        updateContextPanels();
+        return;
+      }
+      if(!append){ selectedItems.forEach(item=>item.el.classList.remove('selected')); selectedItems=[]; }
+      if(append && selectedItems.includes(it)){
+        it.el.classList.remove('selected');
+        selectedItems = selectedItems.filter(item=>item!==it);
+        if(selected===it) selected = selectedItems[selectedItems.length-1]||null;
+        if(!selectedItems.length){ quickbar.classList.remove('show'); qs('#dupBtn').disabled = true; }
+        updateContextPanels();
+        return;
+      }
+      it.el.classList.add('selected');
+      if(!selectedItems.includes(it)) selectedItems.push(it);
       selected = it;
-      if(it){ it.el.classList.add('selected'); bringFront(it); quickbar.classList.add('show'); }
-      else quickbar.classList.remove('show');
-      qs('#dupBtn').disabled = !it;
+      quickbar.classList.add('show');
+      qs('#dupBtn').disabled = !selected;
+      updateContextPanels();
+    }
+    function selectItems(items){
+      selectedItems.forEach(item=>item.el.classList.remove('selected'));
+      selectedItems = [...new Set(items)];
+      selectedItems.forEach(item=>item.el.classList.add('selected'));
+      selected = selectedItems[selectedItems.length-1]||null;
+      quickbar.classList.toggle('show', !!selected);
+      qs('#dupBtn').disabled = !selected;
       updateContextPanels();
     }
     function updateContextPanels(){
@@ -778,8 +837,51 @@ class Component extends DCLogic {
       if(isPhoto) syncFilterUI();
       if(isText)  syncTextUI();
     }
-    stage.addEventListener('pointerdown', e=>{ if(e.target===stage) select(null); });
-    stagearea.addEventListener('pointerdown', e=>{ if(e.target===stagearea || e.target===qs('#ws_stagewrap')) select(null); });
+    let marqueeAppend = false;
+    stage.addEventListener('pointerdown', e=>{
+      if(e.target!==stage || e.button!==0) return;
+      e.preventDefault();
+      marqueeAppend = e.shiftKey;
+      if(!marqueeAppend) clearSelection();
+      marqueeStart = pt(e);
+      selectionBox.style.display = 'block';
+      selectionBox.style.left = marqueeStart.x+'px';
+      selectionBox.style.top = marqueeStart.y+'px';
+      selectionBox.style.width = '0px';
+      selectionBox.style.height = '0px';
+      const onMove = ev => {
+        const p = pt(ev);
+        const x = Math.min(p.x, marqueeStart.x);
+        const y = Math.min(p.y, marqueeStart.y);
+        const w = Math.abs(p.x - marqueeStart.x);
+        const h = Math.abs(p.y - marqueeStart.y);
+        selectionBox.style.left = x+'px';
+        selectionBox.style.top = y+'px';
+        selectionBox.style.width = w+'px';
+        selectionBox.style.height = h+'px';
+      };
+      const onUp = ev => {
+        const rect = selectionBox.getBoundingClientRect();
+        selectionBox.style.display = 'none';
+        selectionBox.style.width = '0';
+        selectionBox.style.height = '0';
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+        const hits = pg().items.filter(item => {
+          const r = item.el.getBoundingClientRect();
+          return r.left < rect.right && r.right > rect.left && r.top < rect.bottom && r.bottom > rect.top;
+        });
+        if(hits.length){
+          if(marqueeAppend) selectItems([...selectedItems, ...hits]);
+          else selectItems(hits);
+        }
+      };
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onUp);
+    });
+    stagearea.addEventListener('pointerdown', e=>{ if(e.target===stagearea || e.target===qs('#ws_stagewrap')) clearSelection(); });
 
     // ── Gesture engine ────────────────────────────────────────────
     function pt(e){ const r=stage.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
@@ -803,9 +905,16 @@ class Component extends DCLogic {
     document.addEventListener('touchmove', e=>{ if(_dragging) e.preventDefault(); },{passive:false});
 
     function startDrag(e,it){
-      e.preventDefault(); select(it);
-      const s=pt(e), ox=it.x, oy=it.y;
-      endGesture(ev=>{ const p=pt(ev); it.x=ox+(p.x-s.x); it.y=oy+(p.y-s.y); render(it); },it,e.pointerId);
+      e.preventDefault();
+      const items = selectedItems.includes(it) ? selectedItems : [it];
+      if(!selectedItems.includes(it)) select(it);
+      const s=pt(e);
+      const offsets = items.map(item=>({item,x:item.x,y:item.y}));
+      endGesture(ev=>{
+        const p=pt(ev);
+        const dx=p.x-s.x, dy=p.y-s.y;
+        offsets.forEach(o=>{ o.item.x=o.x+dx; o.item.y=o.y+dy; render(o.item); });
+      },it,e.pointerId);
     }
 
     function startResize(e,it,corner){
@@ -873,17 +982,33 @@ class Component extends DCLogic {
     // ── Add / drag-drop ───────────────────────────────────────────
     qs('#addBtn').onclick     = ()=>fileInput.click();
     qs('#addTextBtn').onclick = ()=>addText();
+    if(phonePreviewBtn){
+      phonePreviewBtn.onclick = ()=>{
+        phonePreviewMode = !phonePreviewMode;
+        phonePreviewBtn.classList.toggle('active', phonePreviewMode);
+        phonePreviewBtn.innerHTML = phonePreviewMode
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="3"></rect><path d="M12 19h.01"></path></svg>離開預覽'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="3"></rect><path d="M12 19h.01"></path></svg>手機預覽';
+        fitStage();
+      };
+    }
     fileInput.onchange = function(){ handleFiles(this.files); this.value=''; };
     function handleFiles(files){
       const imgs = [...files].filter(f=>f.type.startsWith('image/'));
+      if(!imgs.length){ toast('請選擇圖片檔案'); return; }
       imgs.forEach((f,i)=>{
-        const rd=new FileReader(); rd.onload=e=>addPhoto(e.target.result,i); rd.readAsDataURL(f); });
+        const rd=new FileReader(); rd.onload=e=>addPhoto(e.target.result,i); rd.readAsDataURL(f);
+      });
     }
     workspace.addEventListener('dragover',  e=>{ e.preventDefault(); workspace.classList.add('over'); });
     workspace.addEventListener('dragleave', e=>{ if(e.target===workspace) workspace.classList.remove('over'); });
     workspace.addEventListener('drop', e=>{
       e.preventDefault(); workspace.classList.remove('over');
-      if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+      let files = e.dataTransfer.files;
+      if(!files.length && e.dataTransfer.items){
+        files = [...e.dataTransfer.items].map(it=>it.getAsFile()).filter(Boolean);
+      }
+      if(files.length) handleFiles(files);
     });
 
     // Emojis
