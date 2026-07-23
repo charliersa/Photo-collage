@@ -155,10 +155,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
 .workspace{position:relative;overflow:hidden;background:var(--ws);display:flex;flex-direction:column}
 .workspace::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.028) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;z-index:0}
 .stagearea{flex:1;display:grid;place-items:center;position:relative;min-height:0;z-index:1}
-.stage-wrap{position:relative}
+.stage-wrap{position:relative;transform-origin:center center}
 .stage-wrap.phone-preview{display:flex;justify-content:center;align-items:center;padding:18px 0 24px;background:linear-gradient(180deg,#191815,#0f0e0c);border-radius:44px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 18px 40px rgba(0,0,0,.24);}
 .stage-wrap.phone-preview .stage{border-radius:34px;box-shadow:0 20px 42px rgba(0,0,0,.35)}
 .stage{position:relative;overflow:hidden;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.45),0 32px 80px rgba(0,0,0,.35),0 0 0 .5px rgba(255,255,255,.06);border-radius:2px}
+
+.zoom-controls{position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(20,18,14,.86);border:1px solid rgba(255,255,255,.12);border-radius:999px;backdrop-filter:blur(14px);z-index:1200}
+.zoom-controls button{width:32px;height:32px;border:none;border-radius:50%;background:rgba(255,255,255,.08);color:#f5f0e6;cursor:pointer;display:grid;place-items:center;transition:background .15s}
+.zoom-controls button:hover{background:rgba(255,255,255,.16)}
+.zoom-controls span{min-width:40px;text-align:center;font-size:11px;color:#d8cbbd;letter-spacing:.03em}
 
 /* ── Items ─────────────────────────────────────────────────── */
 .item{position:absolute;touch-action:none;will-change:transform}
@@ -438,6 +443,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
           </div>
         </div>
       </div>
+      <div class="zoom-controls" id="zoomControls">
+        <button type="button" id="zoomOut" title="縮小">–</button>
+        <span id="zoomVal">100%</span>
+        <button type="button" id="zoomIn" title="放大">+</button>
+      </div>
       <div class="quickbar" id="ws_quickbar">
         <button class="qbtn" id="qFront" title="移到最前"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M4 16V6a2 2 0 0 1 2-2h10"></path></svg></button>
         <button class="qbtn" id="qBack" title="移到最後"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="12" height="12" rx="2"></rect><path d="M20 8v10a2 2 0 0 1-2 2H8"></path></svg></button>
@@ -523,7 +533,18 @@ class Component extends DCLogic {
     const fileInput = qs('#fileInput');
     const projInput = qs('#projInput');
     const phonePreviewBtn = qs('#phonePreviewBtn');
+    const zoomInBtn = qs('#zoomIn');
+    const zoomOutBtn = qs('#zoomOut');
+    const zoomVal = qs('#zoomVal');
     let phonePreviewMode = false;
+    let stageScale = 1;
+    const MIN_STAGE_SCALE = 0.5;
+    const MAX_STAGE_SCALE = 2.5;
+    function updateStageScale(value){
+      stageScale = Math.min(MAX_STAGE_SCALE, Math.max(MIN_STAGE_SCALE, value));
+      stageWrap.style.transform = `scale(${stageScale})`;
+      if(zoomVal) zoomVal.textContent = `${Math.round(stageScale*100)}%`;
+    }
     if(fileInput){ fileInput.multiple = true; fileInput.accept = 'image/*'; }
     const selectionBox = document.createElement('div');
     selectionBox.className = 'selection-box';
@@ -655,6 +676,7 @@ class Component extends DCLogic {
       w = Math.max(160,w); h = Math.max(160,h);
       stage.style.width = w+'px'; stage.style.height = h+'px';
       stageWrap.classList.toggle('phone-preview', phonePreviewMode);
+      updateStageScale(stageScale);
     }
 
     // ── Item creation ──────────────────────────────────────────────
@@ -1009,6 +1031,11 @@ class Component extends DCLogic {
     }
     workspace.addEventListener('dragover',  e=>{ e.preventDefault(); workspace.classList.add('over'); });
     workspace.addEventListener('dragleave', e=>{ if(e.target===workspace) workspace.classList.remove('over'); });
+    if(zoomInBtn) zoomInBtn.addEventListener('click', ()=> updateStageScale(stageScale + 0.1));
+    if(zoomOutBtn) zoomOutBtn.addEventListener('click', ()=> updateStageScale(stageScale - 0.1));
+    stagearea.addEventListener('wheel', e =>{
+      e.preventDefault(); updateStageScale(stageScale - Math.sign(e.deltaY) * 0.08);
+    }, {passive:false});
     workspace.addEventListener('drop', e=>{
       e.preventDefault(); workspace.classList.remove('over');
       let files = e.dataTransfer.files;
