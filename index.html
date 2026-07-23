@@ -343,10 +343,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
     <div class="group">
       <div class="lbl">自動排版</div>
       <div class="layouts" id="layouts"></div>
-      <div class="slider" style="margin-top:10px;margin-bottom:0">
-        <label>間距 <b><span id="gapVal">10</span>px</b></label>
-        <!-- range 不能帶 value 屬性:React 會視為受控元件,在每次 input 後把數值強制還原(初始值由 JS 設定) -->
-        <input type="range" id="gapRange" min="0" max="40">
+      <!-- 間距改用數字輸入(不帶 value 屬性:React 會視為受控元件,在每次 input 後把數值強制還原,初始值由 JS 設定) -->
+      <div class="res-custom" style="margin-top:10px">
+        <label for="gapInput">間距(0–40 px)</label>
+        <input type="number" id="gapInput" min="0" max="40" step="1" inputmode="numeric">
       </div>
     </div>
 
@@ -1341,15 +1341,18 @@ class Component extends DCLogic {
     });
 
     let gap=10, curLayout=null;
-    // range 初始值(HTML 不帶 value 屬性,避免被 React 當成受控元件而在拖曳後彈回)
-    qs('#gapRange').value=gap;
+    // 輸入框初始值(HTML 不帶 value 屬性,避免被 React 當成受控元件而在輸入後還原)
+    qs('#gapInput').value=gap;
     qs('#brightRange').value=100; qs('#contrastRange').value=100; qs('#satRange').value=100;
     qs('#eraserSize').value=40;
-    qs('#gapRange').addEventListener('input', e=>{
-      gap=+e.target.value; qs('#gapVal').textContent=gap;
-      // 滑桿前進/後退時即時重排目前版型(散佈版型含隨機抖動且不吃間距,略過以免照片亂跳)
+    qs('#gapInput').addEventListener('input', e=>{
+      const v=parseInt(e.target.value,10);
+      if(isNaN(v)) return;                       // 輸入中(空字串)先不動作
+      gap=Math.min(40,Math.max(0,v));
+      // 數值改變時即時重排目前版型(散佈版型含隨機抖動且不吃間距,略過以免照片亂跳)
       if(curLayout && !curLayout.scatter && pg().items.some(it=>it.type==='photo')) applyLayout(curLayout);
     });
+    qs('#gapInput').addEventListener('change', e=>{ e.target.value=gap; });  // 失焦時把超出範圍/清空的輸入校正回實際值
 
     // ── Layout algorithms ──────────────────────────────────────────
     function applyLayout(L, idx){
