@@ -264,6 +264,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
   .panel::before{content:'';display:block;width:40px;height:4px;background:#c5bdb3;border-radius:2px;margin:10px auto 0;flex-shrink:0}
   .panel.panel-open{transform:translateX(-50%) translateY(0);transition-timing-function:cubic-bezier(.33,1,.68,1)}
   /* 扇形選單沿用基礎樣式(貼齊左下角) */
+  /* 輸入框字級 <16px 時 iOS 聚焦會自動放大頁面,固定 16px 避免跳縮放 */
+  input[type=number],input[type=text]{font-size:16px}
   .pagebar{padding:4px 10px;border-top:none;border-bottom:1px solid rgba(255,255,255,.05)}
   .ptab{min-width:28px;height:24px;font-size:10px;padding:0 8px}
   .padd{width:26px;height:26px;font-size:14px}
